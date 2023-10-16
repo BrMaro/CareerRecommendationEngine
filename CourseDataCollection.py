@@ -2,6 +2,8 @@ from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 import mysql.connector
 
@@ -24,7 +26,6 @@ db_config = {
     "database": "CampusCourses"
 }
 
-
 def login(kcse_index, year, password):
     driver.find_element(By.ID, "id_kcse_index_number").send_keys(kcse_index)
     driver.find_element(By.ID, "id_kcse_year").send_keys(year)
@@ -32,38 +33,17 @@ def login(kcse_index, year, password):
     driver.find_element(By.TAG_NAME, "button").click()
 
 
-def update_institution_values(id, alias, name, category, institution_type, parent_ministry):
-    update_institution_table_query = f"""
-    INSERT INTO Institution(id,alias,Name,Category,Institution_type,Parent_ministry)
-    VALUES(%s,%s,%s,%s,%s,%s)
-    """
-    data = (id, alias, name, category, institution_type, parent_ministry)
-    cursor.execute(update_institution_table_query, data)
-    conn.commit()
+def get_course_and_certfication_data():
+    driver.find_element(By.XPATH, "(//span[@class='hide-menu'])[3]").click()  # Institution tab
+    driver.find_element(By.XPATH,"(//span[@class='filter-option pull-left'])[2]").click() # Group tab
+
+    search = driver.find_element(By.XPATH,"//button[contains(@class,'btn bg-inverse')]")
+    dropdown_ul = driver.find_elements(By.XPATH, "(//ul[@class='dropdown-menu inner'])")
+    for li in dropdown_ul:
+        print(li.text)
 
 
-def get_institution_data():
-    driver.find_element(By.XPATH, "(//ul[@class='nav in']//a)[2]").click()  # Institution tab
-    select_element = driver.find_element(By.TAG_NAME, "select")
-    select = Select(select_element)
-    select.select_by_index(3)
-    option_text = select.options[3].text
 
-    try:
-        while driver.find_element(By.LINK_TEXT, "Next").is_enabled():
-            td_elements = driver.find_elements(By.CSS_SELECTOR, "td")
-            for i in range(0, (int(option_text) * 6), 6):
-                id = td_elements[i].text
-                alias = td_elements[i + 1].text
-                name = td_elements[i + 2].text
-                category = td_elements[i + 3].text
-                institution_type = td_elements[i + 4].text
-                parent_ministry = td_elements[i + 5].text
-                update_institution_values(id, alias, name, category, institution_type, parent_ministry)
-                driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            driver.find_element(By.LINK_TEXT, "Next").click()
-    except IndexError:
-        pass
 
 
 login(index_no, examination_year, password)
@@ -75,18 +55,39 @@ cursor.execute(show_tables)
 for row in cursor.fetchall():
     print(row)
 
-create_institution_table_query = """
-CREATE TABLE IF NOT EXISTS Institution (
+
+get_course_and_certfication_data()
+
+
+create_course_table_query = """
+CREATE TABLE IF NOT EXISTS Course (
 id INT PRIMARY KEY,
 alias VARCHAR(255),
-Name VARCHAR(255),
-Category VARCHAR(255),
-institution_type VARCHAR(255),
-Parent_Ministry VARCHAR(255)
+course_name VARCHAR(255),
+Cluster/Group VARCHAR(255),
+Cluter_subject_1 VARCHAR(255),
+Cluter_subject_2 VARCHAR(255),
+Cluter_subject_3 VARCHAR(255),
+Cluter_subject_4 VARCHAR(255),
+Minimum_subject_1 VARCHAR(255),
+Minimum_subject_1_grade VARCHAR(255),
+Minimum_subject_2 VARCHAR(255),
+Minimum_subject_2_grade VARCHAR(255),
+Minimum_subject_3 VARCHAR(255),
+Minimum_subject_3_grade VARCHAR(255),
+Overall_grade VARCHAR(255),
 );
 """
-cursor.execute(create_institution_table_query)
-for row in cursor.fetchall():
-    print(row)
 
-get_institution_data()
+create_certification_table_query = """
+CREATE TABLE IF NOT EXISTS Certfication (
+Programme_Code INT PRIMARY KEY,
+FOREIGN KEY(Name) REFERENCES Name(Intitution),
+FOREGIN KEY(course_name)
+Programme_Name VARCHAR(255),
+Year_1_Programme_cost VARCHAR(255),
+2022_cut_off VARCHAR(255),
+2021_cut_off VARCHAR(255),
+2020_cut_off VARCHAR(255)
+);
+"""
