@@ -26,6 +26,7 @@ db_config = {
     "database": "CampusCourses"
 }
 
+
 def login(kcse_index, year, password):
     driver.find_element(By.ID, "id_kcse_index_number").send_keys(kcse_index)
     driver.find_element(By.ID, "id_kcse_year").send_keys(year)
@@ -33,15 +34,32 @@ def login(kcse_index, year, password):
     driver.find_element(By.TAG_NAME, "button").click()
 
 
+def check_certification_duplicate_records(prog_code):
+    check_duplicate_query = "SELECT * FROM my_table WHERE Programme_Code = %s"
+    data = prog_code
+    cursor.execute(check_duplicate_query,data)
+    if cursor.fetchone() is not None:
+        return True
+    else:
+        return False
+
+def update_course_values():
+
+
+
 def get_course_and_certfication_data():
     driver.find_element(By.XPATH, "(//span[@class='hide-menu'])[3]").click()  # Institution tab
-    driver.find_element(By.XPATH,"(//span[@class='filter-option pull-left'])[2]").click() # Group tab
-
-    search = driver.find_element(By.XPATH,"//button[contains(@class,'btn bg-inverse')]")
     dropdown_ul = driver.find_elements(By.XPATH, "(//ul[@class='dropdown-menu inner'])")
-    for li in dropdown_ul:
-        print(li.text)
-
+    li_elements = dropdown_ul[1].find_elements(By.TAG_NAME,"li")
+    li_elements = li_elements[1:]
+    for i in range(len(li_elements)):
+        driver.find_element(By.XPATH, "(//span[@class='filter-option pull-left'])[2]").click()  # Group tab
+        dropdown_ul = driver.find_elements(By.XPATH, "(//ul[@class='dropdown-menu inner'])")
+        li_elements = dropdown_ul[1].find_elements(By.TAG_NAME, "li")
+        li_elements = li_elements[1:]
+        li_elements[i].click()
+        print(f"Cluster {i+1} collected")
+        driver.find_element(By.XPATH,"//button[contains(@class,'btn bg-inverse')]").click() # search button
 
 
 
