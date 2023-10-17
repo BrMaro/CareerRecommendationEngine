@@ -33,7 +33,7 @@ def login(kcse_index, year, password):
 
 def update_institution_values(id, alias, name, category, institution_type, parent_ministry):
     update_institution_table_query = f"""
-    INSERT INTO Institution(id,alias,Name,Category,Institution_type,Parent_ministry)
+    INSERT INTO Institution(id,alias,IName,Category,Institution_type,Parent_ministry)
     VALUES(%s,%s,%s,%s,%s,%s)
     """
     data = (id, alias, name, category, institution_type, parent_ministry)
@@ -78,7 +78,7 @@ create_institution_table_query = """
 CREATE TABLE IF NOT EXISTS Institution (
 id INT PRIMARY KEY,
 alias VARCHAR(255) UNIQUE,
-Name VARCHAR(255) UNIQUE,
+IName VARCHAR(255) UNIQUE,
 Category VARCHAR(255),
 institution_type VARCHAR(255),
 Parent_Ministry VARCHAR(255)
@@ -89,3 +89,4 @@ for row in cursor.fetchall():
     print(row)
 
 get_institution_data()
+driver.quit()
