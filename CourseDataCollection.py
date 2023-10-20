@@ -8,6 +8,8 @@ import mysql.connector
 # Set up Google Chrome option and open browser
 options = Options()
 options.add_experimental_option("detach", True)
+ # Enable headless mode
+
 driver = webdriver.Chrome(options=options)
 url = "https://students.kuccps.net/login/"
 driver.get(url)
@@ -42,25 +44,26 @@ def check_certification_duplicate_records(prog_code):
         return False
 
 
-def update_course_values(id, course_name, Cluster, Cluster_s_1, Cluster_s_2, Cluster_s_3, Cluster_s_4, Min_s_1,
-                         Min_s_1_grade, Min_s_2, Min_s_2_grade, Min_s_3, Min_s_3_grade, Min_s_4, Min_s_4_grade,Min_grade):
+def update_course_values(id, programme_name, Cluster, Cluster_s_1, Cluster_s_2, Cluster_s_3, Cluster_s_4, Min_s_1,
+                         Min_s_1_grade, Min_s_2, Min_s_2_grade, Min_s_3, Min_s_3_grade, Min_s_4, Min_s_4_grade,
+                         Min_grade):
     update_course_table_query = f"""
-    INSERT INTO Institution(id,course_name,Cluster,Cluster_subject_1 ,Cluster_subject_2,Cluster_subject_3 ,Cluster_subject_4 ,Min_subject_1,Min_subject_1_grade ,Min_subject_2 ,Min_subject_2_grade,Min_subject_3 ,Min_subject_3_grade,Min_subject_4 ,Min_subject_4_grade,Minimum_Mean_Grade)
+    INSERT INTO Institution(id,programme_name,Cluster,Cluster_subject_1 ,Cluster_subject_2,Cluster_subject_3 ,Cluster_subject_4 ,Min_subject_1,Min_subject_1_grade ,Min_subject_2 ,Min_subject_2_grade,Min_subject_3 ,Min_subject_3_grade,Min_subject_4 ,Min_subject_4_grade,Minimum_Mean_Grade)
     VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
     """
-    data = (id, course_name, Cluster, Cluster_s_1, Cluster_s_2, Cluster_s_3, Cluster_s_4, Min_s_1, Min_s_1_grade,
-            Min_s_2, Min_s_2_grade, Min_s_3, Min_s_3_grade, Min_s_4, Min_s_4_grade,Min_grade)
+    data = (id, programme_name, Cluster, Cluster_s_1, Cluster_s_2, Cluster_s_3, Cluster_s_4, Min_s_1, Min_s_1_grade,
+            Min_s_2, Min_s_2_grade, Min_s_3, Min_s_3_grade, Min_s_4, Min_s_4_grade, Min_grade)
     cursor.execute(update_course_table_query, data)
     conn.commit()
 
 
-def update_certification_values(Programme_Code, Iname, course_name, Programme_Name, Year_1_Programme_cost,
+def update_certification_values(Programme_Code, Iname, Programme_Name, Year_1_Programme_cost,
                                 _2022_cut_off, _2021_cut_off, _2020_cut_off):
     update_certification_table_query = f"""
-        INSERT INTO Institution(Programme_Code,Iname,course_name,Programme_Name,Year_1_Programme_cost,_2022_cut_off,_2021_cut_off,_2020_cut_off)
+        INSERT INTO Institution(Programme_Code,Iname,Programme_Name,Year_1_Programme_cost,_2022_cut_off,_2021_cut_off,_2020_cut_off)
         VALUES(%s,%s,%s,%s,%s,%s,%s,%s)
         """
-    data = (Programme_Code, Iname, course_name, Programme_Name, Year_1_Programme_cost, _2022_cut_off, _2021_cut_off,
+    data = (Programme_Code, Iname, Programme_Name, Year_1_Programme_cost, _2022_cut_off, _2021_cut_off,
             _2020_cut_off)
     cursor.execute(update_certification_table_query, data)
     conn.commit()
@@ -84,6 +87,8 @@ def get_course_and_certfication_data():
     dropdown_ul = driver.find_elements(By.XPATH, "(//ul[@class='dropdown-menu inner'])")
     li_elements = dropdown_ul[1].find_elements(By.TAG_NAME, "li")
     li_elements = li_elements[1:]
+
+    #scrape courses per cluster
     for i in range(len(li_elements)):
         driver.find_element(By.XPATH, "(//span[@class='filter-option pull-left'])[2]").click()  # Group tab
         dropdown_ul = driver.find_elements(By.XPATH, "(//ul[@class='dropdown-menu inner'])")
@@ -93,18 +98,23 @@ def get_course_and_certfication_data():
         print(f"Cluster {i + 1} collected")
         driver.find_element(By.XPATH, "//button[contains(@class,'btn bg-inverse')]").click()  # search button
 
-        select_element = driver.find_element(By.TAG_NAME, "select")
+        select_element = driver.find_element(By.NAME, "DataTables_Table_0_length")
         select = Select(select_element)
         select.select_by_index(3)
 
-        td2_elements = driver.find_elements(By.CSS_SELECTOR, "td")
+        prog_table = driver.find_element(By.CLASS_NAME,"col-sm-12")
+        prog_tbody = prog_table.find_element(By.TAG_NAME,"tbody")
+        prog_tr = prog_tbody.find_elements(By.CSS_SELECTOR,"tr")
 
-        for i in range(len(td2_elements)):
-            td2_elements[i].click()
-            course_name = driver.find_element(By.XPATH, "//h3[@class='text-center']").text
+        #scrape individual courses
+        for i in range(len(prog_tr)):
+            driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", prog_tr[i])
+
+            print(prog_tr[i].text)
+            prog_tr[i].click()
+            programme_name = driver.find_element(By.XPATH, "//h3[@class='text-center']").text
             cluster = driver.find_element(By.XPATH, "//button[contains(@class,'btn btn-outline')]").text
-            print(course_name, cluster)
-
+            #print(programme_name, cluster)
 
             Cluster_s_1 = ""
             Cluster_s_2 = ""
@@ -136,7 +146,7 @@ def get_course_and_certfication_data():
                 Cluster_s_2 = entry_td3_elements[1].text
             elif len(entry_td3_elements) == 2:
                 Cluster_s_1 = entry_td3_elements[0].text
-            elif len(entry_td3_elements) == 2 and table_elements[0].find_element(By.TAG_NAME,"th").text =="Minimum Mean Grade":
+            elif len(entry_td3_elements) == 2 and table_elements[0].find_element(By.TAG_NAME,"th").text == "Minimum Mean Grade":
                 Min_grade = entry_td3_elements[0].text
 
             # Scrape from the minimum subject requirements table
@@ -150,7 +160,7 @@ def get_course_and_certfication_data():
                 Min_s_3_grade = subject_td3_elements[5].text
                 Min_s_4 = subject_td3_elements[6].text
                 Min_s_4_grade = subject_td3_elements[7].text
-                print(Min_s_1, Min_s_1_grade)
+                #print(Min_s_1, Min_s_1_grade)
             elif len(subject_td3_elements) == 6:
                 Min_s_1 = subject_td3_elements[0].text
                 Min_s_1_grade = subject_td3_elements[1].text
@@ -158,23 +168,44 @@ def get_course_and_certfication_data():
                 Min_s_2_grade = subject_td3_elements[3].text
                 Min_s_3 = subject_td3_elements[4].text
                 Min_s_3_grade = subject_td3_elements[5].text
-                print(Min_s_1, Min_s_1_grade)
+                #print(Min_s_1, Min_s_1_grade)
             elif len(subject_td3_elements) == 4:
                 Min_s_1 = subject_td3_elements[0].text
                 Min_s_1_grade = subject_td3_elements[1].text
                 Min_s_2 = subject_td3_elements[2].text
                 Min_s_2_grade = subject_td3_elements[3].text
-                print(Min_s_1, Min_s_1_grade)
+                #print(Min_s_1, Min_s_1_grade)
             elif len(subject_td3_elements) == 2:
                 Min_s_1 = subject_td3_elements[0].text
                 Min_s_1_grade = subject_td3_elements[1].text
-                print(Min_s_1, Min_s_1_grade)
+                #print(Min_s_1, Min_s_1_grade)
 
             # update values to the database
-            #update_course_values(id, course_name, cluster, Cluster_s_1, Cluster_s_2, Cluster_s_3, Cluster_s_4, Min_s_1, Min_s_1_grade,Min_s_2, Min_s_2_grade, Min_s_3, Min_s_3_grade,Min_s_4,Min_s_4_grade,Min_grade)
+            # update_course_values(id, programme_name, cluster, Cluster_s_1, Cluster_s_2, Cluster_s_3, Cluster_s_4, Min_s_1, Min_s_1_grade,Min_s_2, Min_s_2_grade, Min_s_3, Min_s_3_grade,Min_s_4,Min_s_4_grade,Min_grade)
+
+            itable = driver.find_element(By.XPATH, "//table[@class = 'table table-bordered small']")
+            itable_tbody = itable.find_element(By.TAG_NAME, 'tbody')
+            itable_tr_elements = itable_tbody.find_elements(By.TAG_NAME, "td")
 
 
-        print(f"Cluster {i + 1} collected")
+            # scrape institutions per course
+            for i in range(0, len(itable_tr_elements),9):
+                Programme_Code = itable_tr_elements[i+2].text
+                Iname = itable_tr_elements[i].text
+                Programme_Name = itable_tr_elements[i+3].text
+                Year_1_Programme_cost = itable_tr_elements[i+4].text
+                _2022_cut_off = itable_tr_elements[i+5].text
+                _2021_cut_off = itable_tr_elements[i+6].text
+                _2020_cut_off = itable_tr_elements[i+7].text
+                # update_certification_values(Programme_Code, Iname, Programme_Name, Year_1_Programme_cost,_2022_cut_off, _2021_cut_off, _2020_cut_off)
+            driver.back()
+
+            #Reload group list
+            prog_table = driver.find_element(By.CLASS_NAME, "col-sm-12")
+            prog_tbody = prog_table.find_element(By.TAG_NAME, "tbody")
+            prog_tr = prog_tbody.find_elements(By.CSS_SELECTOR, "tr")
+
+            #
 
 
 login(index_no, examination_year, password)
