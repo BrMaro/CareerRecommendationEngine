@@ -88,7 +88,7 @@ def get_course_and_certfication_data():
     li_elements = dropdown_ul[1].find_elements(By.TAG_NAME, "li")
     li_elements = li_elements[1:]
 
-    #scrape courses per cluster
+    #scrape Cluster list
     for i in range(len(li_elements)):
         driver.find_element(By.XPATH, "(//span[@class='filter-option pull-left'])[2]").click()  # Group tab
         dropdown_ul = driver.find_elements(By.XPATH, "(//ul[@class='dropdown-menu inner'])")
@@ -98,15 +98,11 @@ def get_course_and_certfication_data():
         print(f"Cluster {i + 1} collected")
         driver.find_element(By.XPATH, "//button[contains(@class,'btn bg-inverse')]").click()  # search button
 
-        select_element = driver.find_element(By.NAME, "DataTables_Table_0_length")
-        select = Select(select_element)
-        select.select_by_index(3)
-
         prog_table = driver.find_element(By.CLASS_NAME,"col-sm-12")
         prog_tbody = prog_table.find_element(By.TAG_NAME,"tbody")
         prog_tr = prog_tbody.find_elements(By.CSS_SELECTOR,"tr")
 
-        #scrape individual courses
+        #scrape course list
         for i in range(len(prog_tr)):
             driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", prog_tr[i])
 
@@ -188,7 +184,7 @@ def get_course_and_certfication_data():
             itable_tr_elements = itable_tbody.find_elements(By.TAG_NAME, "td")
 
 
-            # scrape institutions per course
+            # scrape certification list
             for i in range(0, len(itable_tr_elements),9):
                 Programme_Code = itable_tr_elements[i+2].text
                 Iname = itable_tr_elements[i].text
@@ -205,7 +201,12 @@ def get_course_and_certfication_data():
             prog_tbody = prog_table.find_element(By.TAG_NAME, "tbody")
             prog_tr = prog_tbody.find_elements(By.CSS_SELECTOR, "tr")
 
-            #
+
+        try:
+            if driver.find_element(By.LINK_TEXT, "Next").is_enabled():
+                driver.find_element(By.LINK_TEXT, "Next").click()
+        except IndexError:
+            pass
 
 
 login(index_no, examination_year, password)
