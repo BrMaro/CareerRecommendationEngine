@@ -1,3 +1,4 @@
+import selenium.common.exceptions
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -8,7 +9,7 @@ import mysql.connector
 # Set up Google Chrome option and open browser
 options = Options()
 options.add_experimental_option("detach", True)
- # Enable headless mode
+# Enable headless mode
 
 driver = webdriver.Chrome(options=options)
 url = "https://students.kuccps.net/login/"
@@ -88,125 +89,138 @@ def get_course_and_certfication_data():
     li_elements = dropdown_ul[1].find_elements(By.TAG_NAME, "li")
     li_elements = li_elements[1:]
 
-    #scrape Cluster list
-    for i in range(len(li_elements)):
+    # scrape Cluster list
+    for cl in range(len(li_elements)):
+        driver.execute_script("window.scrollTo(0, 0);")
         driver.find_element(By.XPATH, "(//span[@class='filter-option pull-left'])[2]").click()  # Group tab
         dropdown_ul = driver.find_elements(By.XPATH, "(//ul[@class='dropdown-menu inner'])")
         li_elements = dropdown_ul[1].find_elements(By.TAG_NAME, "li")
         li_elements = li_elements[1:]
-        li_elements[i].click()
-        print(f"Cluster {i + 1} collected")
+        li_elements[cl].click()
+        print(f"Collecting Cluster {cl + 1}")
         driver.find_element(By.XPATH, "//button[contains(@class,'btn bg-inverse')]").click()  # search button
 
-        prog_table = driver.find_element(By.CLASS_NAME,"col-sm-12")
-        prog_tbody = prog_table.find_element(By.TAG_NAME,"tbody")
-        prog_tr = prog_tbody.find_elements(By.CSS_SELECTOR,"tr")
+        # get number of pages per cluster
 
-        #scrape course list
-        for i in range(len(prog_tr)):
-            driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", prog_tr[i])
+        pg1 = driver.find_element(By.LINK_TEXT, "1")
+        all_pg = driver.find_elements(By.XPATH, "(//li[@class='paginate_button ']//a)")
+        all_pg.insert(0, pg1)
+        # scrape courses per page
+        for pg in range(len(all_pg)):
 
-            print(prog_tr[i].text)
-            prog_tr[i].click()
-            programme_name = driver.find_element(By.XPATH, "//h3[@class='text-center']").text
-            cluster = driver.find_element(By.XPATH, "//button[contains(@class,'btn btn-outline')]").text
-            #print(programme_name, cluster)
-
-            Cluster_s_1 = ""
-            Cluster_s_2 = ""
-            Cluster_s_3 = ""
-            Cluster_s_4 = ""
-            Min_s_1 = ""
-            Min_s_1_grade = ""
-            Min_s_2 = ""
-            Min_s_2_grade = ""
-            Min_s_3 = ""
-            Min_s_3_grade = ""
-            Min_s_4 = ""
-            Min_s_4_grade = ""
-            Min_grade = ""
-            table_elements = driver.find_elements(By.XPATH, "//div[@class = 'col-md-6']")
-            # scrape from the minimum entry requirements table
-            entry_td3_elements = table_elements[0].find_elements(By.TAG_NAME, "td")
-            if len(entry_td3_elements) == 5:
-                Cluster_s_1 = entry_td3_elements[0].text
-                Cluster_s_2 = entry_td3_elements[1].text
-                Cluster_s_3 = entry_td3_elements[2].text
-                Cluster_s_4 = entry_td3_elements[3].text
-            elif len(entry_td3_elements) == 4:
-                Cluster_s_1 = entry_td3_elements[0].text
-                Cluster_s_2 = entry_td3_elements[1].text
-                Cluster_s_3 = entry_td3_elements[2].text
-            elif len(entry_td3_elements) == 3:
-                Cluster_s_1 = entry_td3_elements[0].text
-                Cluster_s_2 = entry_td3_elements[1].text
-            elif len(entry_td3_elements) == 2:
-                Cluster_s_1 = entry_td3_elements[0].text
-            elif len(entry_td3_elements) == 2 and table_elements[0].find_element(By.TAG_NAME,"th").text == "Minimum Mean Grade":
-                Min_grade = entry_td3_elements[0].text
-
-            # Scrape from the minimum subject requirements table
-            subject_td3_elements = table_elements[1].find_elements(By.TAG_NAME, "td")
-            if len(subject_td3_elements) == 8:
-                Min_s_1 = subject_td3_elements[0].text
-                Min_s_1_grade = subject_td3_elements[1].text
-                Min_s_2 = subject_td3_elements[2].text
-                Min_s_2_grade = subject_td3_elements[3].text
-                Min_s_3 = subject_td3_elements[4].text
-                Min_s_3_grade = subject_td3_elements[5].text
-                Min_s_4 = subject_td3_elements[6].text
-                Min_s_4_grade = subject_td3_elements[7].text
-                #print(Min_s_1, Min_s_1_grade)
-            elif len(subject_td3_elements) == 6:
-                Min_s_1 = subject_td3_elements[0].text
-                Min_s_1_grade = subject_td3_elements[1].text
-                Min_s_2 = subject_td3_elements[2].text
-                Min_s_2_grade = subject_td3_elements[3].text
-                Min_s_3 = subject_td3_elements[4].text
-                Min_s_3_grade = subject_td3_elements[5].text
-                #print(Min_s_1, Min_s_1_grade)
-            elif len(subject_td3_elements) == 4:
-                Min_s_1 = subject_td3_elements[0].text
-                Min_s_1_grade = subject_td3_elements[1].text
-                Min_s_2 = subject_td3_elements[2].text
-                Min_s_2_grade = subject_td3_elements[3].text
-                #print(Min_s_1, Min_s_1_grade)
-            elif len(subject_td3_elements) == 2:
-                Min_s_1 = subject_td3_elements[0].text
-                Min_s_1_grade = subject_td3_elements[1].text
-                #print(Min_s_1, Min_s_1_grade)
-
-            # update values to the database
-            # update_course_values(id, programme_name, cluster, Cluster_s_1, Cluster_s_2, Cluster_s_3, Cluster_s_4, Min_s_1, Min_s_1_grade,Min_s_2, Min_s_2_grade, Min_s_3, Min_s_3_grade,Min_s_4,Min_s_4_grade,Min_grade)
-
-            itable = driver.find_element(By.XPATH, "//table[@class = 'table table-bordered small']")
-            itable_tbody = itable.find_element(By.TAG_NAME, 'tbody')
-            itable_tr_elements = itable_tbody.find_elements(By.TAG_NAME, "td")
-
-
-            # scrape certification list
-            for i in range(0, len(itable_tr_elements),9):
-                Programme_Code = itable_tr_elements[i+2].text
-                Iname = itable_tr_elements[i].text
-                Programme_Name = itable_tr_elements[i+3].text
-                Year_1_Programme_cost = itable_tr_elements[i+4].text
-                _2022_cut_off = itable_tr_elements[i+5].text
-                _2021_cut_off = itable_tr_elements[i+6].text
-                _2020_cut_off = itable_tr_elements[i+7].text
-                # update_certification_values(Programme_Code, Iname, Programme_Name, Year_1_Programme_cost,_2022_cut_off, _2021_cut_off, _2020_cut_off)
-            driver.back()
-
-            #Reload group list
+            # print(f"Page {pg}")
             prog_table = driver.find_element(By.CLASS_NAME, "col-sm-12")
             prog_tbody = prog_table.find_element(By.TAG_NAME, "tbody")
             prog_tr = prog_tbody.find_elements(By.CSS_SELECTOR, "tr")
 
+            for i in range(len(prog_tr)):
+                driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", prog_tr[i])
+                print(prog_tr[i].text)  # print the programmes
 
-        try:
-            if driver.find_element(By.LINK_TEXT, "Next").is_enabled():
-                driver.find_element(By.LINK_TEXT, "Next").click()
-        except IndexError:
-            pass
+                # prog_tr[i].click()
+                # programme_name = driver.find_element(By.XPATH, "//h3[@class='text-center']").text
+                # cluster = driver.find_element(By.XPATH, "//button[contains(@class,'btn btn-outline')]").text
+                # #print(programme_name, cluster)
+                #
+                # Cluster_s_1 = ""
+                # Cluster_s_2 = ""
+                # Cluster_s_3 = ""
+                # Cluster_s_4 = ""
+                # Min_s_1 = ""
+                # Min_s_1_grade = ""
+                # Min_s_2 = ""
+                # Min_s_2_grade = ""
+                # Min_s_3 = ""
+                # Min_s_3_grade = ""
+                # Min_s_4 = ""
+                # Min_s_4_grade = ""
+                # Min_grade = ""
+                # table_elements = driver.find_elements(By.XPATH, "//div[@class = 'col-md-6']")
+                # # scrape from the minimum entry requirements table
+                # entry_td3_elements = table_elements[0].find_elements(By.TAG_NAME, "td")
+                # if len(entry_td3_elements) == 5:
+                #     Cluster_s_1 = entry_td3_elements[0].text
+                #     Cluster_s_2 = entry_td3_elements[1].text
+                #     Cluster_s_3 = entry_td3_elements[2].text
+                #     Cluster_s_4 = entry_td3_elements[3].text
+                # elif len(entry_td3_elements) == 4:
+                #     Cluster_s_1 = entry_td3_elements[0].text
+                #     Cluster_s_2 = entry_td3_elements[1].text
+                #     Cluster_s_3 = entry_td3_elements[2].text
+                # elif len(entry_td3_elements) == 3:
+                #     Cluster_s_1 = entry_td3_elements[0].text
+                #     Cluster_s_2 = entry_td3_elements[1].text
+                # elif len(entry_td3_elements) == 2:
+                #     Cluster_s_1 = entry_td3_elements[0].text
+                # elif len(entry_td3_elements) == 2 and table_elements[0].find_element(By.TAG_NAME,"th").text == "Minimum Mean Grade":
+                #     Min_grade = entry_td3_elements[0].text
+                #
+                # # Scrape from the minimum subject requirements table
+                # subject_td3_elements = table_elements[1].find_elements(By.TAG_NAME, "td")
+                # if len(subject_td3_elements) == 8:
+                #     Min_s_1 = subject_td3_elements[0].text
+                #     Min_s_1_grade = subject_td3_elements[1].text
+                #     Min_s_2 = subject_td3_elements[2].text
+                #     Min_s_2_grade = subject_td3_elements[3].text
+                #     Min_s_3 = subject_td3_elements[4].text
+                #     Min_s_3_grade = subject_td3_elements[5].text
+                #     Min_s_4 = subject_td3_elements[6].text
+                #     Min_s_4_grade = subject_td3_elements[7].text
+                #     #print(Min_s_1, Min_s_1_grade)
+                # elif len(subject_td3_elements) == 6:
+                #     Min_s_1 = subject_td3_elements[0].text
+                #     Min_s_1_grade = subject_td3_elements[1].text
+                #     Min_s_2 = subject_td3_elements[2].text
+                #     Min_s_2_grade = subject_td3_elements[3].text
+                #     Min_s_3 = subject_td3_elements[4].text
+                #     Min_s_3_grade = subject_td3_elements[5].text
+                #     #print(Min_s_1, Min_s_1_grade)
+                # elif len(subject_td3_elements) == 4:
+                #     Min_s_1 = subject_td3_elements[0].text
+                #     Min_s_1_grade = subject_td3_elements[1].text
+                #     Min_s_2 = subject_td3_elements[2].text
+                #     Min_s_2_grade = subject_td3_elements[3].text
+                #     #print(Min_s_1, Min_s_1_grade)
+                # elif len(subject_td3_elements) == 2:
+                #     Min_s_1 = subject_td3_elements[0].text
+                #     Min_s_1_grade = subject_td3_elements[1].text
+                #     #print(Min_s_1, Min_s_1_grade)
+                #
+                # # update values to the database
+                # # update_course_values(id, programme_name, cluster, Cluster_s_1, Cluster_s_2, Cluster_s_3, Cluster_s_4, Min_s_1, Min_s_1_grade,Min_s_2, Min_s_2_grade, Min_s_3, Min_s_3_grade,Min_s_4,Min_s_4_grade,Min_grade)
+                #
+                # itable = driver.find_element(By.XPATH, "//table[@class = 'table table-bordered small']")
+                # itable_tbody = itable.find_element(By.TAG_NAME, 'tbody')
+                # itable_tr_elements = itable_tbody.find_elements(By.TAG_NAME, "td")
+                #
+                #
+                # # scrape certification list
+                # for i in range(0, len(itable_tr_elements),9):
+                #     Programme_Code = itable_tr_elements[i+2].text
+                #     Iname = itable_tr_elements[i].text
+                #     Programme_Name = itable_tr_elements[i+3].text
+                #     Year_1_Programme_cost = itable_tr_elements[i+4].text
+                #     _2022_cut_off = itable_tr_elements[i+5].text
+                #     _2021_cut_off = itable_tr_elements[i+6].text
+                #     _2020_cut_off = itable_tr_elements[i+7].text
+                #     # update_certification_values(Programme_Code, Iname, Programme_Name, Year_1_Programme_cost,_2022_cut_off, _2021_cut_off, _2020_cut_off)
+                # driver.back()
+                #
+                # #Reload group list
+                # prog_table = driver.find_element(By.CLASS_NAME, "col-sm-12")
+                # prog_tbody = prog_table.find_element(By.TAG_NAME, "tbody")
+                # prog_tr = prog_tbody.find_elements(By.CSS_SELECTOR, "tr")
+
+            pg1 = driver.find_element(By.LINK_TEXT, "1")
+            all_pg = driver.find_elements(By.XPATH, "(//li[@class='paginate_button ']//a)")
+            all_pg.insert(0, pg1)
+
+            #
+
+            if len(all_pg) > 1 and pg + 1 < len(all_pg):
+                all_pg[pg + 1].click()
+
+        print(f"Cluster {cl + 1} collected\n")
 
 
 login(index_no, examination_year, password)
