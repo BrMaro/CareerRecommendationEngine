@@ -37,9 +37,19 @@ def login(kcse_index, year, password):
 #return True if the record is already recorded
 def check_certification_duplicate_records(prog_code):
     check_duplicate_query = "SELECT * FROM Certification WHERE Programme_Code = %s"
-    data = prog_code
+    data = (prog_code,)
     cursor.execute(check_duplicate_query, data)
     if cursor.fetchone() is not None:
+        return True
+    else:
+        return False
+
+
+def check_course_duplicate_records(course_name):
+    check_duplicate_course = "SELECT * FROM course WHERE programme_name = %s"
+    cursor.execute(check_duplicate_course,(course_name,))
+    print(f"check course duplicate record checking: {course_name}")
+    if cursor .fetchone() is not None:
         return True
     else:
         return False
@@ -49,8 +59,8 @@ def update_course_values(programme_name, Cluster, Cluster_s_1, Cluster_s_2, Clus
                          Min_s_1_grade, Min_s_2, Min_s_2_grade, Min_s_3, Min_s_3_grade, Min_s_4, Min_s_4_grade,
                          Min_grade):
     update_course_table_query = f"""
-    INSERT INTO Institution(programme_name,Cluster,Cluster_subject_1 ,Cluster_subject_2,Cluster_subject_3 ,Cluster_subject_4 ,Min_subject_1,Min_subject_1_grade ,Min_subject_2 ,Min_subject_2_grade,Min_subject_3 ,Min_subject_3_grade,Min_subject_4 ,Min_subject_4_grade,Minimum_Mean_Grade)
-    VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+    INSERT INTO Course(programme_name,Cluster,Cluster_subject_1 ,Cluster_subject_2,Cluster_subject_3 ,Cluster_subject_4 ,Minimum_subject_1,Minimum_subject_1_grade ,Minimum_subject_2 ,Minimum_subject_2_grade,Minimum_subject_3 ,Minimum_subject_3_grade,Minimum_subject_4 ,Minimum_subject_4_grade,Minimum_Mean_Grade)
+    VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
     """
     data = (programme_name, Cluster, Cluster_s_1, Cluster_s_2, Cluster_s_3, Cluster_s_4, Min_s_1, Min_s_1_grade,
             Min_s_2, Min_s_2_grade, Min_s_3, Min_s_3_grade, Min_s_4, Min_s_4_grade, Min_grade)
@@ -61,8 +71,8 @@ def update_course_values(programme_name, Cluster, Cluster_s_1, Cluster_s_2, Clus
 def update_certification_values(Programme_Code, Iname, Programme_Name, Year_1_Programme_cost,
                                 _2022_cut_off, _2021_cut_off, _2020_cut_off):
     update_certification_table_query = f"""
-        INSERT INTO Institution(Programme_Code,Iname,Programme_Name,Year_1_Programme_cost,_2022_cut_off,_2021_cut_off,_2020_cut_off)
-        VALUES(%s,%s,%s,%s,%s,%s,%s,%s)
+        INSERT INTO certification(Programme_Code,Iname,Programme_Name,Year_1_Programme_cost,_2022_cut_off,_2021_cut_off,_2020_cut_off)
+        VALUES(%s,%s,%s,%s,%s,%s,%s)
         """
     data = (Programme_Code, Iname, Programme_Name, Year_1_Programme_cost, _2022_cut_off, _2021_cut_off,
             _2020_cut_off)
@@ -191,9 +201,10 @@ def get_course_and_certfication_data():
                     Min_s_1_grade = subject_td3_elements[1].text
                     #print(Min_s_1, Min_s_1_grade)
 
-                # update values to the database
-                update_course_values(programme_name, cluster, Cluster_s_1, Cluster_s_2, Cluster_s_3, Cluster_s_4, Min_s_1, Min_s_1_grade,Min_s_2, Min_s_2_grade, Min_s_3, Min_s_3_grade,Min_s_4,Min_s_4_grade,Min_grade)
-                print(f"{programme_name}")
+                # update values to the database if not already in database
+                if not check_course_duplicate_records(programme_name):
+                    update_course_values(programme_name, cluster, Cluster_s_1, Cluster_s_2, Cluster_s_3, Cluster_s_4, Min_s_1, Min_s_1_grade,Min_s_2, Min_s_2_grade, Min_s_3, Min_s_3_grade,Min_s_4,Min_s_4_grade,Min_grade)
+                    print(f"{programme_name}")
 
                 itable = driver.find_element(By.XPATH, "//table[@class = 'table table-bordered small']")
                 itable_tbody = itable.find_element(By.TAG_NAME, 'tbody')
@@ -203,13 +214,14 @@ def get_course_and_certfication_data():
                 # scrape certification list
                 for i in range(0, len(itable_tr_elements),9):
                     Programme_Code = itable_tr_elements[i+2].text
+                    print(Programme_Code)
                     Iname = itable_tr_elements[i].text
                     Programme_Name = itable_tr_elements[i+3].text
                     Year_1_Programme_cost = itable_tr_elements[i+4].text
                     _2022_cut_off = itable_tr_elements[i+5].text
                     _2021_cut_off = itable_tr_elements[i+6].text
                     _2020_cut_off = itable_tr_elements[i+7].text
-                    if check_certification_duplicate_records(Programme_Code):
+                    if not check_certification_duplicate_records(Programme_Code):
                         update_certification_values(Programme_Code, Iname, Programme_Name, Year_1_Programme_cost,_2022_cut_off, _2021_cut_off, _2020_cut_off)
                         print(f"Program Code: {Programme_Code, Iname}")
                 driver.back()
@@ -242,7 +254,7 @@ for row in cursor.fetchall():
 
 create_course_table_query = """
 CREATE TABLE IF NOT EXISTS Course (
-course_id INT PRIMARY KEY AUTO-INCREMENT,
+course_id INT PRIMARY KEY AUTO_INCREMENT,
 programme_name VARCHAR(255) UNIQUE,
 Cluster VARCHAR(255),
 Cluster_subject_1 VARCHAR(255),
@@ -261,7 +273,7 @@ Minimum_Mean_Grade VARCHAR(255)
 );
 """
 create_certification_table_query = """
-CREATE TABLE IF NOT EXISTS Certfication (
+CREATE TABLE IF NOT EXISTS Certification (
 Programme_Code INT PRIMARY KEY,
 Iname VARCHAR(255),
 FOREIGN KEY(Iname) REFERENCES Institution(Iname),
@@ -269,9 +281,9 @@ Programme_name VARCHAR(255),
 FOREIGN KEY(Programme_name) REFERENCES Course(programme_name),
 Programme_Name_in_campus VARCHAR(255),
 Year_1_Programme_cost VARCHAR(255),
-2022_cut_off VARCHAR(255),
-2021_cut_off VARCHAR(255),
-2020_cut_off VARCHAR(255)
+_2022_cut_off VARCHAR(255),
+_2021_cut_off VARCHAR(255),
+_2020_cut_off VARCHAR(255)
 );
 """
 
