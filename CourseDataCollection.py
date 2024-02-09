@@ -10,7 +10,18 @@ import mysql.connector
 options = Options()
 options.add_experimental_option("detach", True)
 # Enable headless mode
-
+# options.add_argument("--headless")
+# #options.add_argument(f'user-agent={user_agent}')
+# options.add_argument("--window-size=1920,1080")
+# options.add_argument('--ignore-certificate-errors')
+# options.add_argument('--allow-running-insecure-content')
+# options.add_argument("--disable-extensions")
+# options.add_argument("--proxy-server='direct://'")
+# options.add_argument("--proxy-bypass-list=*")
+# options.add_argument("--start-maximized")
+# options.add_argument('--disable-gpu')
+# options.add_argument('--disable-dev-shm-usage')
+# options.add_argument('--no-sandbox')
 driver = webdriver.Chrome(options=options)
 url = "https://students.kuccps.net/login/"
 driver.get(url)
@@ -216,13 +227,13 @@ def get_course_and_certfication_data():
                     Programme_Code = itable_tr_elements[i+2].text
                     print(Programme_Code)
                     Iname = itable_tr_elements[i].text
-                    Programme_Name = itable_tr_elements[i+3].text
+                    #Programme_Name = itable_tr_elements[i+3].text
                     Year_1_Programme_cost = itable_tr_elements[i+4].text
                     _2022_cut_off = itable_tr_elements[i+5].text
                     _2021_cut_off = itable_tr_elements[i+6].text
                     _2020_cut_off = itable_tr_elements[i+7].text
                     if not check_certification_duplicate_records(Programme_Code):
-                        update_certification_values(Programme_Code, Iname, Programme_Name, Year_1_Programme_cost,_2022_cut_off, _2021_cut_off, _2020_cut_off)
+                        update_certification_values(Programme_Code, Iname, programme_name, Year_1_Programme_cost,_2022_cut_off, _2021_cut_off, _2020_cut_off) # the programme name used here is the programme name taken before preceding loop
                         print(f"Program Code: {Programme_Code, Iname}")
                 driver.back()
 
@@ -272,13 +283,14 @@ Minimum_subject_4_grade VARCHAR(255),
 Minimum_Mean_Grade VARCHAR(255)
 );
 """
+# the code error is that the programme name is changing in the certification table query hence cannot be uses as a foreign key to courses.get a better foregin key
 create_certification_table_query = """
 CREATE TABLE IF NOT EXISTS Certification (
 Programme_Code INT PRIMARY KEY,
 Iname VARCHAR(255),
 FOREIGN KEY(Iname) REFERENCES Institution(Iname),
 Programme_name VARCHAR(255),
-FOREIGN KEY(Programme_name) REFERENCES Course(programme_name),
+FOREIGN KEY(Programme_name) REFERENCES Course(programme_name), 
 Programme_Name_in_campus VARCHAR(255),
 Year_1_Programme_cost VARCHAR(255),
 _2022_cut_off VARCHAR(255),
