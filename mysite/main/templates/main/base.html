@@ -2,48 +2,80 @@
 <html lang="en">
 <head>
     <style type="text/css">
-        .sidenav {
-            height:100%;
-            width:160px;
-            position:fixed ;
+       .sidenav {
+            height: 100%;
+            width: 80px; /* Collapsed width */
+            position: fixed;
             z-index: 1;
-            top:0;
+            top: 0;
             left: 0;
-            background-color: #111;
+            background-color: #2c3e50;
             overflow-x: hidden;
             padding-top: 20px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4);
+            transition: width 0.3s ease, box-shadow 0.3s ease; /* Added transition */
+        }
+
+        .sidenav:hover {
+            width: 240px; /* Expanded width on hover */
+            box-shadow: 5px 0px 15px rgba(0, 0, 0, 0.6);
         }
 
         .sidenav a {
-            padding:6px 8px 6px 16px;
+            padding: 10px 16px;
             text-decoration: none;
-            font-size: 25px;
-            color: #818181;
-            display:block;
+            font-size: 18px;
+            color: #ecf0f1;
+            display: block;
+            transition: color 0.3s ease;
         }
 
-        .sidenav a:hover{
-            color:#f1f1f1
+        .sidenav a:hover {
+            color: #3498db;
         }
 
+        .sidenav a:hover:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(52, 152, 219, 0.1);
+            z-index: -1;
+            transition: background 0.3s ease;
+        }
+        .main-content {
+            margin-left: 80px; /* Initial margin to accommodate the collapsed sidebar */
+            transition: margin-left 0.3s ease; /* Original transition for sidebar */
+            padding: 20px; /* Added padding to prevent content from sticking to the sidebar */
+        }
+
+        .sidenav:hover + .main-content {
+            margin-left: 240px; /* Adjusted margin for expanded sidebar on hover */
+            transition: margin-left 0.3s ease, padding 0.3s ease; /* Refined transition for smooth movement */
+        }
     </style>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     
-    <title>{ % block title %} 
-        { % endblock %}
+    <title>{% block title %} EduRec
+        {% endblock %}
     </title>
     
 </head>
 <body>
         <div class="sidenav">
         <a href="/home">Home</a>
-        <a href="/Clusters">Clusters</a>
-        <a href="/Courses">Courses</a>
-        <a href="/Varsities">Varsities</a>
+        <a href="/clusters">Clusters</a>
+        <a href="/courses">Courses</a>
+        <a href="/varsities">Varsities</a>
+        <a href="/login">Log In</a>
+        <a href="/signup">Sign Up</a>
     </div>
-
+    {% block content %}
+    {% endblock %}
 </body>
 </html>
