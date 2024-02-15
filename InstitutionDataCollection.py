@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import Select
 import mysql.connector
+from mysite.institutions.models import Institution
 
 # Set up Google Chrome option and open browser
 options = Options()

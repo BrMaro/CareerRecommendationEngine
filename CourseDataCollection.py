@@ -2,10 +2,8 @@ import selenium.common.exceptions
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import Select
 from collections import Counter
-import sqlite3
-from django.conf import settings
+import mysql.connector
 import os
 
 
@@ -21,7 +19,6 @@ examination_year = '2022'
 password = '36613105012'
 
 
-database_path = settings.DATABASES['default']['NAME']
 db_config = {
     "host": "localhost",
     "user": "root",
@@ -247,10 +244,8 @@ def get_course_and_certfication_data():
 
 login(index_no, examination_year, password)
 
-if not os.path.isabs(database_path):
-    database_path = os.path.join(settings.BASE_DIR, database_path)
 
-conn = sqlite3.connect(database_path)
+conn = mysql.connector.connect(**db_config)
 cursor = conn.cursor()
 show_tables = "SHOW tables"
 cursor.execute(show_tables)
@@ -259,37 +254,36 @@ for row in cursor.fetchall():
 
 create_course_table_query = """
 CREATE TABLE IF NOT EXISTS Course (
-course_id INTEGER PRIMARY KEY AUTOINCREMENT,
-programme_name TEXT UNIQUE,
-Cluster TEXT,
-Cluster_subject_1 TEXT,
-Cluster_subject_2 TEXT,
-Cluster_subject_3 TEXT,
-Cluster_subject_4 TEXT,
-Minimum_subject_1 TEXT,
-Minimum_subject_1_grade TEXT,
-Minimum_subject_2 TEXT,
-Minimum_subject_2_grade TEXT,
-Minimum_subject_3 TEXT,
-Minimum_subject_3_grade TEXT,
-Minimum_subject_4 TEXT,
-Minimum_subject_4_grade TEXT,
-Minimum_Mean_Grade TEXT
+ccourse_id INT AUTO_INCREMENT PRIMARY KEY,
+programme_name VARCHAR(255) UNIQUE,
+Cluster VARCHAR(255),
+Cluster_subject_1 VARCHAR(255),
+Cluster_subject_2 VARCHAR(255),
+Cluster_subject_3 VARCHAR(255),
+Cluster_subject_4 VARCHAR(255),
+Minimum_subject_1 VARCHAR(255),
+Minimum_subject_1_grade VARCHAR(255),
+Minimum_subject_2 VARCHAR(255),
+Minimum_subject_2_grade VARCHAR(255),
+Minimum_subject_3 VARCHAR(255),
+Minimum_subject_3_grade VARCHAR(255),
+Minimum_subject_4 VARCHAR(255),
+Minimum_subject_4_grade VARCHAR(255),
+Minimum_Mean_Grade VARCHAR(255)
 );
 """
 
 create_certification_table_query = """
 CREATE TABLE IF NOT EXISTS Certification (
-Programme_Code INTEGER PRIMARY KEY,
-Iname TEXT,
--- FOREIGN KEY(Iname) REFERENCES Institution(Iname),  # Comment this line if Institution table does not exist
-Programme_name TEXT,
-FOREIGN KEY(Programme_name) REFERENCES Course(programme_name), 
-Programme_Name_in_campus TEXT,
-Year_1_Programme_cost TEXT,
-_2022_cut_off TEXT,
-_2021_cut_off TEXT,
-_2020_cut_off TEXT
+Programme_Code INT PRIMARY KEY,
+Iname VARCHAR(255),
+Programme_name VARCHAR(255),
+FOREIGN KEY(Programme_name) REFERENCES Course(programme_name),
+Programme_Name_in_campus VARCHAR(255),
+Year_1_Programme_cost VARCHAR(255),
+_2022_cut_off VARCHAR(255),
+_2021_cut_off VARCHAR(255),
+_2020_cut_off VARCHAR(255)
 );
 """
 

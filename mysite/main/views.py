@@ -9,12 +9,8 @@ def index(response):
 def home(response):
     return render(response, "main/home.html",{})
 
-def clusters(response):
-    return render(response, "main/clusters.html",{})
-
-def courses(response):
-    return render(response, "main/courses.html",{})
-
 def recommendations(response):
     return render(response, "main/home.html",{})
 
+def course(response):
+    return render(response, "main/course.html",{}) 

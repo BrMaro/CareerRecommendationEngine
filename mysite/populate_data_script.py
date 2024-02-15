@@ -1,14 +1,15 @@
-from main.models import Certification
-from institutions.models import Institution
-from course.models import Course
 import os
 import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
+django.setup()
 
+from main.models import Certification
+from institutions.models import Institution
+from course.models import Course
 
 def populate_data():
-    institutions_from_existing_db = Certification.objects.using("CampusCourses").all()
+    institutions_from_existing_db = Institution.objects.using("CampusCourses").all()
 
     for institution_data in institutions_from_existing_db:
         Institution.objects.create(
@@ -41,7 +42,7 @@ def populate_data():
             Minimum_Mean_Grade=course_data.Minimum_Mean_Grade,
         )
 
-    certifications_from_existing_db = Certification.objects.using('your_existing_database').all()
+    certifications_from_existing_db = Certification.objects.using('CampusCourses').all()
 
     for certification_data in certifications_from_existing_db:
         Certification.objects.create(
