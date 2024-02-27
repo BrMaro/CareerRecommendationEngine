@@ -36,6 +36,8 @@ class Course(models.Model):
     class Meta:
         managed = False
         db_table = 'course'
+
+        
 class Certification(models.Model):
     programme_code = models.CharField(primary_key=True, max_length=255)
     iname = models.ForeignKey(Institution, models.DO_NOTHING, db_column='Iname', blank=True, null=True)  # Field name made lowercase.
