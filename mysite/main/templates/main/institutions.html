@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+
+{% block title %} Instititutions
+
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+<h1>Instititutions </h1>
+<p>The following are the only publicly mandated institutions in Kenya</p>
+<ol>
+    {% for item in data %}
+    <li> {{ item.iname }}</li>
+
+    {% endfor %}
+
+
+</ol>
+
+</div>
+{% endblock %}
