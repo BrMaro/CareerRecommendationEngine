@@ -5,6 +5,7 @@
 {% block content %}
 <div class = "main-content" >
     <form method="POST" class="form-group">
+        {% csrf_token %}
         {{form}}
         <button type="submit">Register</button>
     </form>
