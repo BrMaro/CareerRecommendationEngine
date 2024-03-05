@@ -14,7 +14,7 @@ def recommendations(response):
     return render(response, "main/home.html",{})
 
 def course(response):
-    return render(response, "main/course.html",{}) 
+    return render(response, "main/courses.html",{}) 
 
 def cluster(response):
     clusters = Course.objects.values_list('cluster', flat=True).distinct()
@@ -23,4 +23,4 @@ def cluster(response):
 
 def institution(response):
     data = Institution.objects.all()
-    return render(response, "main/institution.html",{"data":data})
+    return render(response, "main/institutions.html",{"data":data})

@@ -1,81 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <style type="text/css">
-       .sidenav {
-            height: 100%;
-            width: 90px; /* Collapsed width */
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            left: 0;
-            background-color: #2c3e50;
-            overflow-x: hidden;
-            padding-top: 20px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.4);
-            transition: width 0.3s ease, box-shadow 0.3s ease; /* Added transition */
-        }
-
-        .sidenav:hover {
-            width: 200px; /* Expanded width on hover */
-            box-shadow: 5px 0px 15px rgba(0, 0, 0, 0.6);
-        }
-
-        .sidenav a {
-            padding: 10px 16px;
-            text-decoration: none;
-            font-size: 18px;
-            color: #ecf0f1;
-            display: block;
-            transition: color 0.3s ease;
-        }
-
-        .sidenav a:hover {
-            color: #3498db;
-        }
-
-        .sidenav a:hover:before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(52, 152, 219, 0.1);
-            z-index: -1;
-            transition: background 0.3s ease;
-        }
-        .main-content {
-            margin-left: 80px; /* Initial margin to accommodate the collapsed sidebar */
-            transition: margin-left 0.3s ease; /* Original transition for sidebar */
-            padding: 20px; /* Added padding to prevent content from sticking to the sidebar */
-        }
-
-        .sidenav:hover + .main-content {
-            margin-left: 240px; /* Adjusted margin for expanded sidebar on hover */
-            transition: margin-left 0.3s ease, padding 0.3s ease; /* Refined transition for smooth movement */
-        }
-    </style>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <style type="text/css">
+            /* Basic CSS for the navbar */
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
     
+            .navbar {
+                overflow: hidden;
+                background-color: #333;
+            }
     
-    <title>{% block title %} EduRec
-        {% endblock %}
-    </title>
+            .navbar a {
+                float: left;
+                display: block;
+                color: white;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+            }
     
-</head>
-<body>
-        <div class="sidenav">
-        <a href="/home">Home</a>
-        <a href="/clusters">Clusters</a>
-        <a href="/courses">Courses</a>
-        <a href="/institutions">Institutions</a>
-        <a href="/login">Log In</a>
-        <a href="/register">Sign Up</a>
-    </div>
-    {% block content %}
-    {% endblock %}
-</body>
-</html>
+            .navbar a:hover {
+                background-color: #ddd;
+                color: black;
+            }
+    
+            .navbar a.right {
+                float: right;
+            }
+        </style>
+    
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+        <title>{% block title %} EduRec {% endblock %}</title>
+    </head>
+    
+    <body>
+    
+        <!-- Basic CSS Navbar -->
+        <div class="navbar">
+            <a href="/home">Home</a>
+            <a href="/clusters">Clusters</a>
+            <a href="/courses">Courses</a>
+            <a href="/institutions">Institutions</a>
+    
+
+            <a href="/login" class="right">{% if user.is_authenticated %}Log Out{% else %}Sign In{% endif %}</a>
+        </div>
+    
+        <!-- Your existing content -->
+        {% if user.is_authenticated %}
+            {% block content %}
+            {% endblock %}
+        {% else %}
+            Log in <a href="/login">here</a>
+        {% endif %}>
+    </body>
+    
+    </html>
