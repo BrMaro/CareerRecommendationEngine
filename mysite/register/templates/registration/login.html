@@ -4,15 +4,33 @@
 Log In
 {% endblock %}
 
-
-
 {% block content %}
 <div class="main-content">
-    <form method="POST" class ="form-group">
-        {% csrf_token %}
-        {{form}}
-        <button type="submit">Log In</button>
-        <p>Don't have an account? Create one <a href="/register">here</a></p>
-    </form>
+    {% if not user.is_authenticated %}
+        <form method="POST" class ="form-group">
+            {% csrf_token %}
+                <hr>
+                <label id="icon" for="name"><i class="fas fa-envelope"></i></label>
+            
+                <label id="icon" for="name"><i class="fas fa-user"></i></label>
+                <input type="text" name="name" id="name" placeholder="Name" required/>
+                <label id="icon" for="name"><i class="fas fa-unlock-alt"></i></label>
+                <input type="password" name="name" id="name" placeholder="Password" required/>
+                <hr>
+                <div class="gender">
+                <input type="radio" value="none" id="male" name="gender" checked/>
+                <label for="male" class="radio">Male</label>
+                <input type="radio" value="none" id="female" name="gender" />
+                <label for="female" class="radio">Female</label>
+                </div>
+                <hr>
+            
+            <p>Don't have an account? Create one <a href="/register">here</a></p>
+            <button type="submit">Log In</button>
+        </form>
+    {% else %}
+        <p>You are already logged in</p>
+        <p>Go back <a href="/">home</a></p>
+    {% endif %}
 </div>
 {% endblock %}

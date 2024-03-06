@@ -1,64 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <head>
-        <style type="text/css">
-            /* Basic CSS for the navbar */
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-            }
-    
-            .navbar {
-                overflow: hidden;
-                background-color: #333;
-            }
-    
-            .navbar a {
-                float: left;
-                display: block;
-                color: white;
-                text-align: center;
-                padding: 14px 16px;
-                text-decoration: none;
-            }
-    
-            .navbar a:hover {
-                background-color: #ddd;
-                color: black;
-            }
-    
-            .navbar a.right {
-                float: right;
-            }
-        </style>
-    
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-        <title>{% block title %} EduRec {% endblock %}</title>
-    </head>
-    
-    <body>
-    
-        <!-- Basic CSS Navbar -->
-        <div class="navbar">
-            <a href="/home">Home</a>
-            <a href="/clusters">Clusters</a>
-            <a href="/courses">Courses</a>
-            <a href="/institutions">Institutions</a>
-    
+    <style type="text/css">
+        /* Enhanced CSS for the visually appealing navbar */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-            <a href="/login" class="right">{% if user.is_authenticated %}Log Out{% else %}Sign In{% endif %}</a>
-        </div>
-    
-        <!-- Your existing content -->
+        .navbar {
+            overflow: hidden;
+            background: linear-gradient(to right, #3498db, #2c3e50); /* Gradient background */
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Slight shadow */
+        }
+
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+        }
+
+        .navbar a:hover {
+            background-color: #fff; /* Background color on hover */
+            color: #333; /* Text color on hover */
+        }
+
+        .navbar a.right {
+            float: right;
+        }
+        
+        .main-content {
+            margin-left: 40px; /* Increased separation from the left margin */
+            transition: margin-left 0.3s ease; /* Transition for smooth movement */
+            padding: 20px; /* Added padding to prevent content from sticking to the sidebar */
+        }
+
+
+    </style>
+
+    </style>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %} EduRec {% endblock %}</title>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <a href="/home">Home</a>
+        <a href="/clusters">Clusters</a>
+        
+        <a href="/institutions">Institutions</a>
+
         {% if user.is_authenticated %}
-            {% block content %}
-            {% endblock %}
+            <a href="/logout" class="right">Log Out</a>
         {% else %}
-            Log in <a href="/login">here</a>
-        {% endif %}>
-    </body>
-    
-    </html>
+            <a href="/login" class="right">Sign In</a>
+        {% endif %}
+    </div>
+
+
+    <div class="main-content">
+        {% block content %}
+        {% endblock %}
+
+    </div>
+</body>
+
+</html>

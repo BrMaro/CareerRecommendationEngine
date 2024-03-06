@@ -3,12 +3,15 @@
 {% block title %} Create an Account {% endblock %}
 
 {% block content %}
-<div class = "main-content" >
-    <form method="POST" class="form-group">
-        {% csrf_token %}
-        {{form}}
-        <button type="submit">Register</button>
-    </form>
-</div>
-
+    <div class="log-in">
+        {% if not user.is_authenticated %}
+            <form method="POST" class="form-group">
+                {% csrf_token %}
+                {{form}}
+                <button type="submit">Register</button>
+            </form>
+        {% else %}
+            <p>You are already registered.</p>
+        {% endif %}
+    </div>
 {% endblock %}
