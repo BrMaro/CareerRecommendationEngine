@@ -17,9 +17,9 @@
                 <td>{{ form.password }}</td>
             </tr>
         </table>
+        <p>Don't have an account.Sign up <a href="/register">here</a></p>
 
-    <input type="submit" value="login">
-    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit" value="login">Log In</button>
 </form>
 
 {# Assumes you set up the password_reset view in your URLconf #}

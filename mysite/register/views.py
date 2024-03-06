@@ -31,10 +31,10 @@ def login_user(request):
                 login(request,user)
                 return redirect("/home")
             else:
-                messages.error(request, "Error Logging In. Try again.")
-                return redirect("/login")
+                messages.error(request, 'Invalid username or password. Please try again.')
+                
     else:
-        form=RegisterForm()
+        form = AuthenticationForm()
     return render(request,"registration/login.html",{"form":form})
 
 

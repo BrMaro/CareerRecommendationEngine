@@ -7,6 +7,13 @@
 {% block content %}
 
 
+<h1>Courses</h1>
+<p>As at the moment, the following are the courses offered in Kenya</p>
+<ol>
+    {% for item in courses %}
+        <li> {{ item.programme_name }}</li>
+    {% endfor %}
 
+</ol>
 
 {% endblock %}
