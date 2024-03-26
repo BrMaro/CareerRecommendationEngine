@@ -6,14 +6,25 @@
 
 {% block content %}
 
+<div class="main-content">
+    <h1>Courses</h1>
+    <p>As at the moment, the following are the courses offered in Kenya</p>
 
-<h1>Courses</h1>
-<p>As at the moment, the following are the courses offered in Kenya</p>
-<ol>
-    {% for item in courses %}
-        <li> {{ item.programme_name }}</li>
-    {% endfor %}
-
-</ol>
-
+    <table class="courses">
+        <thead>
+            <td>No.</td>
+            <td>Course</td>
+            <td>Cluster</td>
+        </thead>
+        <tbody>
+        {% for item in courses %}
+            <tr data-programme="{{ item.programme_name }}">
+                <td>{{ item.course_id }}.</td>
+                <td>{{ item.programme_name }}</td>
+                <td>{{  item.cluster }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

@@ -10,5 +10,6 @@ urlpatterns = [
     path("courses/",views.course,name="courses"),
     path("clusters/",views.cluster,name="clusters"),
     path("register/",v.register,name='register'),
+    path('certifications/<str:programme_name>/',views.certifications_by_programme,name='certifications_by_programme')
     
 ]
