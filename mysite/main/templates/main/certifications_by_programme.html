@@ -1,0 +1,28 @@
+{% extends 'main/base.html' %}
+
+
+{% block title %} Certifications for {{ programme_name }} {% endblock %}
+
+{% block content %}
+
+
+<div class="main-content">
+    <h1>{{ programme_name }}</h1>
+    <table class="certifications">
+        <tbody>
+            <thead>
+                <td><strong>Id</strong></td>
+                <td><strong>Institution</strong></td>
+                <td><strong>First Year Fee</strong></td>
+            </thead>
+            {% for certification in certifications_data %}
+            <tr>
+                <td>{{ certification.programme_code }}</td>
+                <td>{{ certification.iname }}</td>
+                <td>{{ certification.year_1_programme_cost }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -7,23 +7,29 @@
 {% block content %}
 
 <div class="main-content">
+
     <h1>Courses</h1>
-    <p>As at the moment, the following are the courses offered in Kenya</p>
 
     <table class="courses">
         <thead>
-            <td>No.</td>
-            <td>Course</td>
-            <td>Cluster</td>
+            <td><strong>No.</strong></td>
+            <td><strong>Name</strong></td>
+            <td><strong>Cluster</strong></td>
         </thead>
         <tbody>
-        {% for item in courses %}
-            <tr data-programme="{{ item.programme_name }}">
-                <td>{{ item.course_id }}.</td>
-                <td>{{ item.programme_name }}</td>
-                <td>{{  item.cluster }}</td>
-            </tr>
-        {% endfor %}
+            {% for item in courses %}
+                {% if item.certification_set.exists %} 
+                    <tr data-programme="{{ item.programme_name }}">
+                        <td>{{ item.course_id }}.</td>
+                        <td>
+                            <a href="{% url 'certifications_by_programme' programme_name=item.programme_name %}">
+                                {{ item.programme_name }}
+                            </a>
+                        </td>
+                        <td>{{ item.cluster }}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
         </tbody>
     </table>
 </div>

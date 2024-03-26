@@ -36,7 +36,10 @@ def certifications_by_programme(response,programme_name):
     course = get_object_or_404(Course, programme_name=programme_name)
     print(course)
     certifications = Certification.objects.filter(programme_name=course)
-    print(certifications[0])
+
+    if not certifications:
+        return render(response,"main/no_certifications_error.html",{'certifications': []})
+
     certifications_data = []
     for certification in certifications:
         institution = certification.iname   #extract related Institution object     
