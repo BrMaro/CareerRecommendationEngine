@@ -1,12 +1,10 @@
 {% extends 'main/base.html' %}
 
-{% block title %} Certifications for {{ programme_name }} {% endblock %}
+{% block title %} {{ iname }} Certifications {% endblock %}
 
 {% block content %}
-
-
 <div class="main-content">
-    <h3>{{ programme_name }}</h3>
+    <h3>{{ iname }}</h1>
     <table class="certifications">
         <tbody>
             <thead>
@@ -24,4 +22,5 @@
         </tbody>
     </table>
 </div>
+
 {% endblock %}

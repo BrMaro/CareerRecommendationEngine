@@ -22,7 +22,11 @@
             <tr>
                 <td>{{ inst.id }}</td>
                 <td>{{ inst.alias }}</td>
-                <td>{{ inst.iname }}</td>
+                <td>
+                    <a href="{% url 'certifications_per_institution' iname=inst.iname %}">
+                        {{ inst.iname }}
+                    </a>
+                </td>
                 <td>{{ inst.category }}</td>
                 <td>{{ inst.institution_type }}</td>
             </tr>
