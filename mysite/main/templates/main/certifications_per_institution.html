@@ -9,13 +9,13 @@
         <tbody>
             <thead>
                 <td><strong>Id</strong></td>
-                <td><strong>Institution</strong></td>
+                <td><strong>Course</strong></td>
                 <td><strong>First Year Fee</strong></td>
             </thead>
             {% for certification in certifications_data %}
             <tr>
                 <td>{{ certification.programme_code }}</td>
-                <td>{{ certification.iname }}</td>
+                <td>{{ certification.programme_name}}</td>
                 <td>{{ certification.year_1_programme_cost }}</td>
             </tr>
             {% endfor %}

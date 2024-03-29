@@ -65,11 +65,14 @@ def certifications_per_institution(response, iname):
     certifications_data = []
     for certification in certifications:
         institution = certification.iname   #extract related Institution object     
-        
+        print(institution)
+        course = certification.programme_name
+
         certification_data = {
             'programme_code': certification.programme_code,
             'category': institution.category,
             'iname': institution.iname,
+            'programme_name':course.programme_name,
             'year_1_programme_cost':certification.year_1_programme_cost
         }
         certifications_data.append(certification_data)

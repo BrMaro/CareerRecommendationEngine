@@ -1,29 +1,150 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %} Home
-
 {% endblock %}
 
+
 {% block content %}
+<style>
+       #homepage-top {
+            color: #EEEAEB;
+            position: absolute; 
+            top: 50%; 
+            left: 40%; 
+            transform: translate(-50%, -50%);
+        }
+        #homepage-top p {
+            font-size: 20px;
+        }
+
+        .container {
+    display: flex;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+}
+
+.column {
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin: 10px;
+    border-radius: 10px; /* Add rounded edges */
+
+}
+
+.column:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    background-color: #3E2723; /* Change background color to dark brown on hover */
+    color: #fff; /* Change text color to white on hover */
+}
+
+@media (min-width: 768px) {
+    .column {
+        width: 33.33%;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.link-style {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.link-style:hover {
+    text-decoration: none;
+    color: inherit;
+}
+.image-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden; /* Hide overflow to prevent content spill */
+}
+
+.animated-image {
+    width: 100%;
+    object-fit: cover;
+    position: absolute;
+    bottom: -100%; /* Initial position off the screen */
+    transition: bottom 0.5s ease; /* Smooth transition */
+}
+
+/* Animation to slide the image into place */
+.animated-image.loaded {
+    bottom: 0;
+}
+
+</style>
+
+
 <div class="main-content">
-    <h1>Welcome to Edurec</h1>
-    <p>Are you a Form 4 leaver with no idea of what to study?</p>
-    <p>Don't worry you are NOT alone?</p>
-    <p>Millions of youth around your age are dumbfounded when it comes to this. </p> 
-    <p>This is why I created this website to help guide you to choose a course based on your underlying interests, personality and what you hope to get from this</p>
-    
-
+    <!-- <div style="display: flex; flex-direction: column;">
+        <div style="flex: 1;">
+            <img src="{% static 'images/pexels-pixabay-356065.jpg' %}" alt="Image Placeholder" style="width: 100%;">
+        </div>
+        <div id="homepage-top" style="flex: 1;">
+            <h1><span class="dark">Let's plan</span> your next stage in life</h1>
+            <p>Are you a Form 4 leaver with no idea of what to study?</p>
+            <p>Don't worry you are NOT alone. Millions of youth around your age are dumbfounded when it comes to this.</p>
+        </div>
+    </div>
+     -->
+     <div style="display: flex;">
+        <div style="flex: 1; padding-right: 20px;">
+            <h1>Let's plan your next stage in life</h1>
+            <p>Unsure about your next academic or career step?</p>
+            <p>Let’s navigate this journey together and unlock the possibilities that await you..</p>
+            
+            <button>Sign up</button>
+        
+        </div>
+        
+        <div style="flex: 1; position: relative;" class="image-container">
+            <img src="{% static 'images/pexels-pixabay-356065.jpg' %}" alt="Image Placeholder" style="width: 100%; object-fit: cover;"class="animated-image">
+        </div>
+    </div>
     <!-- Your content for recommending majors can go here -->
-    <h2>Explore Clusters</h2>
-    <p>Explore different clusters of majors to find your interests.</p>
-
-    <h2>Popular Courses</h2>
-    <p>Check out popular courses that might align with your career goals.</p>
-
-    <h2>Top Varsities</h2>
-    <p>Explore top universities offering the majors you are interested in.</p>
-
-    <h2>Tailoured Recommendations</h2>
-    <p><a href="/register">Register</a> now to get access to courses tailoured to your specific needs</p>
+    {% if user.is_authenticated %}
+    <div class="container">
+        <div class="column" style="animation-delay: 0s;">
+            <a href="{% url 'clusters' %}" class="link-style">
+                <h2>Clusters</h2>
+                <p>Explore different clusters of majors to find your interests.</p>
+            </a>
+        </div>
+        <div class="column" style="animation-delay: 0.3s;">
+            <a href="{% url 'courses' %}" class="link-style">
+                <h2>Courses</h2>
+                <p>Check out popular courses that might align with your career goals.</p>
+            </a>
+        </div>
+        <div class="column" style="animation-delay: 0.6s;">
+            <a href="{% url 'institutions' %}" class="link-style">
+                <h2>Institutions</h2>
+                <p>Explore top universities offering the majors you are interested in.</p>
+            </a>
+        </div>
+        <div class="column" style="animation-delay: 0.9s;">
+            <a href="" class="link-style">
+                <h2>Tailored Recommendations</h2>
+                <p>Get access to courses tailored to your specific needs.</p>
+            </a>
+        </div>
+    </div>
+    {% endif %}
+    
 </div>
 {% endblock %}
