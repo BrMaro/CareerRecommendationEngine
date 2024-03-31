@@ -20,7 +20,7 @@
             {% for item in courses %}
                 {% if item.certification_set.exists %} 
                     <tr data-programme="{{ item.programme_name }}">
-                        <td>{{ item.course_id }}.</td>
+                        <td>{{ forloop.counter }}.</td>
                         <td>
                             <a href="{% url 'certifications_by_programme' programme_name=item.programme_name %}">
                                 {{ item.programme_name }}

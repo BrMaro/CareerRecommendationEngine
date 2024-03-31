@@ -1,0 +1,30 @@
+{% extends 'main/base.html' %}
+
+{% block title %} {{ cluster }} {% endblock %}
+
+{% block content %}
+    <div class="main-content">
+        <h3>{{ cluster }}</h3>
+        <table class="courses">
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Cluster</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <a href="{% url 'certifications_by_programme' programme_name=course.programme_name %}">
+                            {{ course.programme_name }}
+                        </a>
+                    </td>
+                    <td>{{ course.cluster }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

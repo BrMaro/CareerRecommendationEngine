@@ -1,56 +1,100 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <style type="text/css">
-        body {
+ body {
             margin: 0;
-            font-family: Inter,Montserrat, DM Sans, Raleway, Roboto;
+            font-family: Inter, Montserrat, DM Sans, Raleway, Roboto;
             background-color: #FFFFFF;
         }
         
         .navbar {
             overflow: hidden;
-            background: linear-gradient(to right, #302614, #E4D8D5); /* Gradient background */
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Slight shadow */
+            background: #000; /* Black background */
+            box-shadow: none; /* Removed shadow */
+            padding: 20px 16px; /* Added padding */
+            color: #fff; /* White text */
         }
-        h1{
+
+        .logo {
+            float: left;
+            margin-right: 24px;
+            color: #fff; /* White text */
+        }
+
+        .logo a {
+            color: #fff; /* White text */
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .auth-buttons {
+            float: right;
+        }
+
+        .button {
+            font-size: 16px;
+            padding: 12px 24px; /* Added padding */
+            border-radius: 5px;
+            border: 2px solid transparent; /* Removed border */
+            transition: all 0.3s ease; /* Smooth transition */
+            margin-left: 10px;
+            margin-top: 10px; /* Added margin */
+            text-decoration: none; /* Removed underline */
+            color: #fff; /* White text */
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .sign-in {
+            background-color: transparent; /* Transparent background */
+            color: #2196F3; /* Blue text */
+            border-color: #2196F3;
+        }
+
+        .register {
+            background-color: #2196F3; /* Darker blue */
+            color: #000; /* Black text */
+            border-color: #2196F3;
+        }
+
+        .register:hover {
+            background-color: #000; /* Black background on hover */
+        }
+
+        .button.logout {
+            color: #fff; /* White text */
+            border: 2px solid #fff; /* White border */
+            background-color: transparent; /* Transparent background */
+            border-radius: 5px; /* Rounded edges */
+            transition: all 0.3s ease; /* Smooth transition */
+        }
+
+        .button.logout:hover {
+            background-color: #fff; /* White background on hover */
+            color: #000; /* Black text on hover */
+        }
+
+        .main-content {
+            margin-top: 20px; /* Added margin */
+            margin-left: 40px;
+            margin-right: 32px;
+            transition: margin-left 0.3s ease;
+            padding: 10px;
+            margin-bottom: 50px;
+        }
+
+        h1 {
             font-size: 64px;
         }
-        h1 .dark{
-            color:#302614;
-        }
 
-        .navbar a {
-            font-size: 16px;
-            float: right;
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
-        }
-        .navbar #title{
-            float: left;
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
-        }
-     
-
-        .navbar a.button:hover {
-            background-color: #eebc83;
-            color: black;
-        } 
-        .main-content {
-            margin-left: 40px; /* Increased separation from the left margin */
-            margin-right:32px;
-            transition: margin-left 0.3s ease; /* Transition for smooth movement */
-            padding: 10px; /* Added padding to prevent content from sticking to the sidebar */
-            margin-bottom: 50px;
+        h1 .dark {
+            color: #302614;
         }
 
         table {
@@ -61,18 +105,33 @@
         }
     
         td, th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
         }
         
         tr:nth-child(even) {
-        background-color: #CBF3F0;
+            background-color: #899796;
         }
+
+        #page-container {
+            position: relative;
+            min-height: 100vh;
+        }
+
+        #content-wrap {
+            padding-bottom: 2.5rem;    /* Footer height */
+        }
+
         .footer {
+            width: 100%;
             background-color: #000;
             color: #fff;
-            padding: 30px 0;
+            padding: 0 -40px;
+            height: 2.5 rem;
+            position: absolute;
+            bottom: 0; /* Stick to the bottom */
+            left: 0;
         }
 
         .footer-columns {
@@ -100,9 +159,10 @@
         }
 
         .footer-column.empty {
-            width: 0; /* Empty columns with no width */
+            width: 0;
             visibility: hidden;
         }
+
 
     </style>
 
@@ -110,58 +170,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{% block title %} EduRec {% endblock %}</title>
+    <title>{% block title %} edurec {% endblock %}</title>
 </head>
 
 <body>
-
-    <div class="navbar">
-        {% if user.is_authenticated %}
-            <a href="/logout" class="button">Log Out</a>
-        {% else %}
-            <a href="/login" class="button">Sign In</a>
-        {% endif %}
-        <h4><a href="/home" id="title">edurec</a></h4>
-
-    </div>
-
-
-    <div id="main-content">
-        {% if messages %}
-            {% for message in messages %}
-                {{ message }}
-            {% endfor %}
-        {% endif %}
-
-        {% block content %}
-        {% endblock %}
-    </div>
-
-
-
-
-    <footer class="footer">
-        <div class="footer-columns">
-            <div class="footer-column">
-                <h3>Contact Us</h3>
-                <p>Email: keremamariari@gmail.com</p>
-                <p>Phone: +254115361123</p>
-                <p>Address: 123 Street, City, Country</p>
+    <div id="page-container">
+        <div id="content-wrap">
+            <div class="navbar">
+                <div class="logo">
+                    <a href="/home">edurec</a>
+                </div>
+                {% if user.is_authenticated %}
+                    <div class="auth-buttons">
+                        <a href="/logout" class="button">Log Out</a>
+                    </div>
+                {% else %}
+                    <div class="auth-buttons">
+                        <a href="/login" class="button sign-in">Sign In</a>
+                        <a href="/register" class="button register">Register</a>
+                    </div>
+                {% endif %}
             </div>
-            <div class="footer-column empty"></div>
-            <div class="footer-column">
-                <h3>Follow Us</h3>
-                <p><a href="#" style="color: #fff; text-decoration: none;">Facebook</a></p>
-                <p><a href="#" style="color: #fff; text-decoration: none;">Twitter</a></p>
-                <p><a href="#" style="color: #fff; text-decoration: none;">Instagram</a></p>
-            </div>
-            <div class="footer-column empty"></div>
-            <div class="footer-column">
-                <p>&copy; 2024 edurec. All rights reserved.</p>
+
+            <div id="main-content">
+                {% if messages %}
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                {% endif %}
+
+                {% block content %}
+                {% endblock %}
             </div>
         </div>
-    </footer>
-    
+
+        <footer class="footer" id="footer">
+            <div class="footer-columns">
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <p>Email: keremamariari@gmail.com</p>
+                    <p>Phone: +254115361123</p>
+                    <p>Address: 123 Street, City, Country</p>
+                </div>
+                <div class="footer-column empty"></div>
+                <div class="footer-column">
+                    <h3>Follow Us</h3>
+                    <p><a href="#" style="color: #fff; text-decoration: none;">Facebook</a></p>
+                    <p><a href="#" style="color: #fff; text-decoration: none;">Twitter</a></p>
+                    <p><a href="#" style="color: #fff; text-decoration: none;">Instagram</a></p>
+                </div>
+                <div class="footer-column empty"></div>
+                <div class="footer-column">
+                    <p>&copy; 2024 edurec. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
 </body>
 
 </html>

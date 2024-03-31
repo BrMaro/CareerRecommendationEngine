@@ -1,23 +1,73 @@
 {% extends 'main/base.html' %}
 
-{% block title %} Certifications for {{ programme_name }} {% endblock %}
+{% block title %} {{ course_data.programme_name }} {% endblock %}
 
 {% block content %}
 
 
+
 <div class="main-content">
-    <h3>{{ programme_name }}</h3>
-    <table class="certifications">
+    <h2>{{ course_data.programme_name }}</h2>
+    <h3>Course Information</h3>
+
+    <p><strong>Cluster:</strong> {{ course_data.cluster }}</p>
+    <p><strong>Cluster Subjects:</strong></p>
+    <ul>
+        <li>{{ course_data.cluster_subjects.0 }}</li>
+        <li>{{ course_data.cluster_subjects.1 }}</li>
+        <li>{{ course_data.cluster_subjects.2 }}</li>
+        <li>{{ course_data.cluster_subjects.3 }}</li>
+    </ul>
+    <p><strong>Minimum Subjects:</strong></p>
+    <table class="min-subjects">
+        <thead>
+            <tr>
+                <td><strong>Subject</strong></td>
+                <td><strong>Grade</strong></td>
+            </tr>
+            
+        </thead>
         <tbody>
-            <thead>
-                <td><strong>Id</strong></td>
-                <td><strong>Institution</strong></td>
-                <td><strong>First Year Fee</strong></td>
-            </thead>
+            <tr>
+                <td>{{ course_data.minimum_subjects.0.subject }}</td>
+                <td>{{ course_data.minimum_subjects.0.grade }}</td>
+            </tr>
+            <tr>
+                <td>{{ course_data.minimum_subjects.1.subject }}</td>
+                <td>{{ course_data.minimum_subjects.1.grade }}</td>
+            </tr>
+            <tr>
+                <td>{{ course_data.minimum_subjects.2.subject }}</td>
+                <td>{{ course_data.minimum_subjects.2.grade }}</td>
+            </tr>
+            <tr>
+                <td>{{ course_data.minimum_subjects.3.subject }}</td>
+                <td>{{ course_data.minimum_subjects.3.grade }}</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <p><strong>Minimum Mean Grade:</strong> {{ course_data.minimum_mean_grade }}</p>
+
+    <hr>
+
+    <h3>Certifications</h3>
+    <table class="certifications">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Institution</th>
+                <th>First Year Fee</th>
+            </tr>
+        </thead>
+        <tbody>
             {% for certification in certifications_data %}
             <tr>
                 <td>{{ certification.programme_code }}</td>
-                <td>{{ certification.iname }}</td>
+                <td><a href="{% url 'certifications_per_institution' iname=certification.iname %}">
+                    {{ certification.iname }}
+                    </a>
+                </td>
                 <td>{{ certification.year_1_programme_cost }}</td>
             </tr>
             {% endfor %}

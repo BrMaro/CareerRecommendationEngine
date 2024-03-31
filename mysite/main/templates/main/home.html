@@ -68,82 +68,163 @@
     text-decoration: none;
     color: inherit;
 }
-.image-container {
-    flex: 1;
-    position: relative;
-    overflow: hidden; /* Hide overflow to prevent content spill */
-}
-
-.animated-image {
-    width: 100%;
-    object-fit: cover;
-    position: absolute;
-    bottom: -100%; /* Initial position off the screen */
-    transition: bottom 0.5s ease; /* Smooth transition */
-}
-
-/* Animation to slide the image into place */
-.animated-image.loaded {
-    bottom: 0;
-}
 
 </style>
 
 
 <div class="main-content">
-    <!-- <div style="display: flex; flex-direction: column;">
-        <div style="flex: 1;">
-            <img src="{% static 'images/pexels-pixabay-356065.jpg' %}" alt="Image Placeholder" style="width: 100%;">
-        </div>
-        <div id="homepage-top" style="flex: 1;">
-            <h1><span class="dark">Let's plan</span> your next stage in life</h1>
-            <p>Are you a Form 4 leaver with no idea of what to study?</p>
-            <p>Don't worry you are NOT alone. Millions of youth around your age are dumbfounded when it comes to this.</p>
-        </div>
-    </div>
-     -->
      <div style="display: flex;">
         <div style="flex: 1; padding-right: 20px;">
             <h1>Let's plan your next stage in life</h1>
             <p>Unsure about your next academic or career step?</p>
-            <p>Let’s navigate this journey together and unlock the possibilities that await you..</p>
+            <p>Let's navigate this journey together and unlock the possibilities that await you..</p>
             
-            <button>Sign up</button>
-        
+            {% if not user.is_authenticated %}
+                <button>Sign up</button>
+            {% endif %}
         </div>
         
         <div style="flex: 1; position: relative;" class="image-container">
-            <img src="{% static 'images/pexels-pixabay-356065.jpg' %}" alt="Image Placeholder" style="width: 100%; object-fit: cover;"class="animated-image">
+            <img src="{% static 'images/drahomir-hugo-posteby-mach-n4y3eiQSIoc-unsplash.jpg' %}" alt="Image Placeholder" >
         </div>
     </div>
     <!-- Your content for recommending majors can go here -->
+   
     {% if user.is_authenticated %}
-    <div class="container">
-        <div class="column" style="animation-delay: 0s;">
-            <a href="{% url 'clusters' %}" class="link-style">
-                <h2>Clusters</h2>
-                <p>Explore different clusters of majors to find your interests.</p>
-            </a>
+        <style>
+            .container {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+            }
+        
+            .flexbox {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Increased shadow */
+                border-radius: 10px; /* Rounded corners */
+                overflow: hidden; /* Hide overflowing content */
+                transition: box-shadow 0.3s, transform 0.3s; /* Smooth transition */
+            }
+        
+            .flexbox:hover {
+                box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5); /* Enhanced shadow on hover */
+                transform: scale(1.05); /* Scale up on hover */
+            }
+        
+            .content, .image {
+                flex: 1;
+                padding: 20px; /* Add padding */
+            }
+        
+            .content {
+                padding-right: 40px; /* Spacing between text and image */
+            }
+        
+            .image img {
+                max-width: calc(100% - 20px); /* Adjust image width */
+                max-height: 240px; /* Increase image height to allow overflow */
+                height: auto;
+                border-radius: 10px; /* Rounded corners */
+                transition: opacity 0.3s; /* Smooth transition */
+                position: relative; /* Positioning for overlay */
+            }
+
+            .image img::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1)); /* Oval gradient */
+                border-radius: 10px; /* Rounded corners */
+            }
+        
+            .flexbox:hover .image img {
+                opacity: 0.8; /* Fade image on hover */
+            }
+        
+            .link-style {
+                text-decoration: none;
+                color: inherit;
+            }
+        </style>    
+        <div class="container">
+        <div class="flexbox">
+            <div class="content">
+                <a href="{% url 'clusters' %}" class="link-style">
+                    <h2>Clusters</h2>
+                    <p>Explore different clusters of majors to find your interests.</p>
+                </a>
+            </div>
+            <div class="image">
+                <img src="{% static 'images/clusters_img.jpg' %}" alt="Clusters Image">
+            </div>
         </div>
-        <div class="column" style="animation-delay: 0.3s;">
-            <a href="{% url 'courses' %}" class="link-style">
-                <h2>Courses</h2>
-                <p>Check out popular courses that might align with your career goals.</p>
-            </a>
+        <div class="flexbox">
+            <div class="image">
+                <img src="{% static 'images/pexels-pixabay-289737.jpg' %}" alt="Courses Image">
+            </div>
+            <div class="content">
+                <a href="{% url 'courses' %}" class="link-style">
+                    <h2>Courses</h2>
+                    <p>Check out popular courses that might align with your career goals.</p>
+                </a>
+            </div>
         </div>
-        <div class="column" style="animation-delay: 0.6s;">
-            <a href="{% url 'institutions' %}" class="link-style">
-                <h2>Institutions</h2>
-                <p>Explore top universities offering the majors you are interested in.</p>
-            </a>
+        <div class="flexbox">
+            <div class="content">
+                <a href="{% url 'institutions' %}" class="link-style">
+                    <h2>Institutions</h2>
+                    <p>Explore top universities offering the majors you are interested in.</p>
+                </a>
+            </div>
+            <div class="image">
+                <img src="{% static 'images/institutions_img.jpg' %}" alt="Institutions Image">
+            </div>
         </div>
-        <div class="column" style="animation-delay: 0.9s;">
-            <a href="" class="link-style">
-                <h2>Tailored Recommendations</h2>
-                <p>Get access to courses tailored to your specific needs.</p>
-            </a>
+        <div class="flexbox">
+            <div class="image">
+                <img src="{% static 'images/recommendations_img.jpg' %}" alt="Tailored Recommendations Image">
+            </div>
+            <div class="content">
+                <a href="" class="link-style">
+                    <h2>Tailored Recommendations</h2>
+                    <p>Get access to courses tailored to your specific needs.</p>
+                </a>
+            </div>
         </div>
     </div>
+    {% else %}
+        <div class="container">
+            <div class="column" style="animation-delay: 0s;">
+                <a href="/clusters/" class="link-style">
+                    <h2>Clusters</h2>
+                    <p>Explore different clusters of majors to find your interests.</p>
+                </a>
+            </div>
+            <div class="column" style="animation-delay: 0.3s;">
+                <a href="/courses/" class="link-style">
+                    <h2>Courses</h2>
+                    <p>Check out popular courses that might align with your career goals.</p>
+                </a>
+            </div>
+            <div class="column" style="animation-delay: 0.6s;">
+                <a href="/institutions/" class="link-style">
+                    <h2>Institutions</h2>
+                    <p>Explore top universities offering the majors you are interested in.</p>
+                </a>
+            </div>
+            <div class="column" style="animation-delay: 0.9s;">
+                <a href="" class="link-style">
+                    <h2>Tailored Recommendations</h2>
+                    <p>Get access to courses tailored to your specific needs.</p>
+                </a>
+            </div>
+        </div>
     {% endif %}
     
 </div>

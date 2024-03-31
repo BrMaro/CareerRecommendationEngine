@@ -18,7 +18,7 @@ def recommendations(response):
 
 
 def course(response):
-    courses = Course.objects.all()
+    courses = Course.objects.filter(certification__isnull=False).distinct()
     return render(response, "main/courses.html",{"courses":courses}) 
 
 
@@ -40,6 +40,23 @@ def certifications_by_programme(response,programme_name):
     if not certifications:
         return render(response,"main/no_certifications_error.html",{'certifications': []})
 
+     # Prepare course information to pass to the template
+    course_data = {
+        'programme_name': course.programme_name,
+        'cluster': course.cluster,
+        'cluster_subjects': [course.cluster_subject_1, course.cluster_subject_2, course.cluster_subject_3, course.cluster_subject_4],
+        'minimum_subjects': [
+            {'subject': course.minimum_subject_1, 'grade': course.minimum_subject_1_grade},
+            {'subject': course.minimum_subject_2, 'grade': course.minimum_subject_2_grade},
+            {'subject': course.minimum_subject_3, 'grade': course.minimum_subject_3_grade},
+            {'subject': course.minimum_subject_4, 'grade': course.minimum_subject_4_grade},
+        ],
+        'minimum_mean_grade': course.minimum_mean_grade,
+    }
+    print(course_data)
+
+        # Prepare certifications data to pass to the template
+
     certifications_data = []
     for certification in certifications:
         institution = certification.iname   #extract related Institution object     
@@ -51,7 +68,8 @@ def certifications_by_programme(response,programme_name):
             'year_1_programme_cost':certification.year_1_programme_cost
         }
         certifications_data.append(certification_data)
-    return render(response, 'main/certifications_by_programme.html', {'certifications_data': certifications_data, 'programme_name': programme_name})
+
+    return render(response, 'main/certifications_by_programme.html', {'certifications_data': certifications_data, 'course_data': course_data})
 
 
 def certifications_per_institution(response, iname):
@@ -81,5 +99,8 @@ def certifications_per_institution(response, iname):
     
     
 
-def courses_by_cluster():
-    pass
+def courses_by_cluster(response,cluster):
+    courses = Course.objects.filter(cluster=cluster,certification__isnull=False).distinct()
+    
+    return render(response, 'main/courses_by_cluster.html', {'courses':courses})
+    
