@@ -7,74 +7,81 @@
 
 {% block content %}
 <style>
-       #homepage-top {
-            color: #EEEAEB;
-            position: absolute; 
-            top: 50%; 
-            left: 40%; 
-            transform: translate(-50%, -50%);
-        }
-        #homepage-top p {
-            font-size: 20px;
-        }
-
-        .container {
-    display: flex;
-    flex-wrap: wrap;
-    opacity: 0;
-    animation: fadeIn 2s forwards;
-}
-
-.column {
-    flex: 1;
-    padding: 20px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s, box-shadow 0.3s;
-    margin: 10px;
-    border-radius: 10px; /* Add rounded edges */
-
-}
-
-.column:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    background-color: #3E2723; /* Change background color to dark brown on hover */
-    color: #fff; /* Change text color to white on hover */
-}
-
-@media (min-width: 768px) {
-    .column {
-        width: 33.33%;
+    #homepage-top {
+        color: #EEEAEB;
+        position: absolute; 
+        top: 50%; 
+        left: 40%; 
+        transform: translate(-50%, -50%);
     }
-}
+    #homepage-top p {
+        font-size: 20px;
+    }
 
-@keyframes fadeIn {
-    from {
+    .container {
+        display: flex;
+        flex-wrap: wrap;
         opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-.link-style {
-    text-decoration: none;
-    color: inherit;
-    cursor: pointer;
-}
+        animation: fadeIn 2s forwards;
+        }
 
-.link-style:hover {
-    text-decoration: none;
-    color: inherit;
-}
+    .column {
+        flex: 1;
+        padding: 20px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s, box-shadow 0.3s;
+        margin: 10px;
+        border-radius: 10px; /* Add rounded edges */
 
+    }
+
+    .column:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        background-color: #3E2723; /* Change background color to dark brown on hover */
+        color: #fff; /* Change text color to white on hover */
+    }
+
+    @media (min-width: 768px) {
+        .column {
+            width: 33.33%;
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    .link-style {
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+    }
+
+    .link-style:hover {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    
+    img #home-img{
+        margin-left:0px;
+        max-width: 100%; 
+        height: auto;
+        object-fit: cover;
+    }
 </style>
 
 
 <div class="main-content">
-     <div style="display: flex;">
-        <div style="flex: 1; padding-right: 20px;">
+     <div >
+        <!-- <div style="padding-right: 20px;">
             <h1>Let's plan your next stage in life</h1>
             <p>Unsure about your next academic or career step?</p>
             <p>Let's navigate this journey together and unlock the possibilities that await you..</p>
@@ -83,12 +90,11 @@
                 <button>Sign up</button>
             {% endif %}
         </div>
-        
-        <div style="flex: 1; position: relative;" class="image-container">
-            <img src="{% static 'images/drahomir-hugo-posteby-mach-n4y3eiQSIoc-unsplash.jpg' %}" alt="Image Placeholder" >
+         -->
+        <div class="image-container">
+            <img id='home-img' src="{% static 'images/uncropped.webp' %}" alt="Image Placeholder"  >
         </div>
     </div>
-    <!-- Your content for recommending majors can go here -->
    
     {% if user.is_authenticated %}
         <style>

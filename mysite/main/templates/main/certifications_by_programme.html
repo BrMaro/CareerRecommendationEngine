@@ -3,8 +3,31 @@
 {% block title %} {{ course_data.programme_name }} {% endblock %}
 
 {% block content %}
+<style>
+  .main-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 12px;
+    background-color: #f8f8f8;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-left: 40px; 
+}
+
+h2 {
+    color: #333;
+}
+h3 {
+    margin-top: 20px;
+    color: #555;
+}
+p {
+    margin-bottom: 12px;
+    color: #666;
+}
 
 
+</style>
 
 <div class="main-content">
     <h2>{{ course_data.programme_name }}</h2>
@@ -22,10 +45,9 @@
     <table class="min-subjects">
         <thead>
             <tr>
-                <td><strong>Subject</strong></td>
-                <td><strong>Grade</strong></td>
+                <th>Subject</th>
+                <th>Grade</th>
             </tr>
-            
         </thead>
         <tbody>
             <tr>
@@ -51,7 +73,7 @@
 
     <hr>
 
-    <h3>Certifications</h3>
+    <h2>Certifications</h2>
     <table class="certifications">
         <thead>
             <tr>
