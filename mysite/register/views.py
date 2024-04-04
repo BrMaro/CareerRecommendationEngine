@@ -4,6 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
 from .forms import RegisterForm
+from .forms import QuestionnaireForm
 
 
 # Create your views here.
@@ -18,6 +19,7 @@ def register(request):
     else:
         form = RegisterForm()
         return render(request, "register/register.html", {"form": form, "user": request.user})
+
 
 def login_user(request):
     if request.method == "POST":
@@ -41,3 +43,29 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     return redirect("/home")  
+
+
+def recommendations(request):
+    if request.method == "POST":
+        form = QuestionnaireForm(request,request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            questionnaire_data = QuestionnaireForm(
+                user=request.user,
+                age=data['age'],
+                agp=data['agp'],
+                interests=', '.join(data['interests']),
+                conscientiousness=data['conscientiousness'],
+                agreeableness=data['agreeableness'],
+                neuroticism=data['neuroticism'],
+                openness=data['openness'],
+                extroversion=data['extroversion']
+            )
+            questionnaire_data.save()
+
+            return render(request,"register/recommendations.html")
+    else:
+        form = QuestionnaireForm()
+        return render(request, 'register/recommendations.html', {'form': form})
+            
+
