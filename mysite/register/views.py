@@ -38,7 +38,6 @@ def login_user(request):
     return render(request,"registration/login.html",{"form":form})
 
 
-
 def logout_user(request):
     logout(request)
     return redirect("/home")  

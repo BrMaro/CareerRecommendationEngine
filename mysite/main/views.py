@@ -53,8 +53,6 @@ def certifications_by_programme(response,programme_name):
         ],
         'minimum_mean_grade': course.minimum_mean_grade,
     }
-    print(course_data)
-
         # Prepare certifications data to pass to the template
 
     certifications_data = []
