@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Institution,Certification,Course
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
 
 # Create your views here.
 
@@ -23,8 +24,8 @@ def course(response):
 
 
 def cluster(response):
-    clusters = Course.objects.values_list('cluster', flat=True).distinct()
-    return render(response, "main/clusters.html",{'clusters':clusters})
+    clusters_with_count = Course.objects.values('cluster').annotate(course_count=Count('course_id'))
+    return render(response, "main/clusters.html", {'clusters_with_count': clusters_with_count})
 
 
 def institution(response):

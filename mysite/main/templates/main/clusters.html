@@ -1,19 +1,28 @@
 {% extends 'main/base.html' %}
  
-{% block title %} Clusters
-
-{% endblock %}
+{% block title %} Clusters {% endblock %}
 
 {% block content %}
 <div class="main-content">
-<h1>Clusters</h1>
-<p>The courses to pick from are generally divided into the following clusters:</p>
-<ul>
-    {% for item in clusters %}
-        <li>{{ item }}</li>
-    {% endfor %}
-</ul>
-
+    <h1>Clusters</h1>
+    <p>The courses to pick from are generally divided into the following clusters:</p>
+    <table class="table">
+        <thead>
+            <th>Cluster</th>
+            <th>No.</th>
+        </thead>
+        <tbody>
+            {% for cluster in clusters_with_count %}
+                <tr>
+                    <td>
+                        <a href="{% url 'courses_by_cluster' cluster=cluster.cluster %}">
+                            {{ cluster.cluster }}
+                        </a>
+                    </td>
+                    <td>{{ cluster.course_count }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
-
 {% endblock %}
