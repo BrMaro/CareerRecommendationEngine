@@ -16,3 +16,7 @@ class RegisterForm(UserCreationForm):
         self.fields['gender'].label = "Gender"
         self.fields['password1'].label = "Password"
         self.fields['password2'].label = "Confirm Password"
+
+class AuthenticationForm(forms.Form):
+    username = forms.CharField(label="Username")
+    password = forms.CharField(label="Password", widget=forms.PasswordInput)
