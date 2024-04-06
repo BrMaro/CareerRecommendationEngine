@@ -1,0 +1,107 @@
+{% extends 'main/base.html' %}
+
+{% block title %} Recommendations {% endblock %}
+
+{% block content %}
+<style>
+.questionnaire-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    font-size: 14px; /* Adjust font size as needed */
+}
+
+.form-control {
+    font-size: 14px; /* Adjust font size as needed */
+}
+.small-text {
+    font-size: 0.8em;
+}
+
+</style>
+
+
+<div class="container">
+    <h1 class="mt-5 mb-4">Complete the Questionnaire</h1>
+    <form method="post" enctype="multipart/form-data" class="needs-validation questionnaire-form" novalidate>
+        {% csrf_token %}
+        
+        <input type="hidden" name="user" value="{{ request.user.id }}">
+
+
+        <div class="form-group">
+            <label for="age" class="form-label">{{ form.age.label }}:</label>
+            {{ form.age }}
+            <div class="invalid-feedback">
+                Please provide a valid age (How many years old are you?).
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="agp" class="form-label">{{ form.agp.label }}:</label>
+            {{ form.agp }}
+            <div class="invalid-feedback">
+                Please provide a valid AGP (What was your average grade points in school?).
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="conscientiousness" class="form-label">
+                <strong>Do you prefer being spontaneous or Do you like planning things ahead?</strong>
+                <p class="small-text">Rate on a scale 1 being inconsistent and spontaneous and 5 being very organized and systematic</p>
+                ({{ form.conscientiousness.label }}):
+            </label>
+            {{ form.conscientiousness }}
+        </div>
+        
+        <div class="form-group">
+            <label for="agreeableness" class="form-label">
+                <strong>Are you emotionally cold to others or Are you kind, sympathetic, and helpful to others?</strong>
+                <p class="small-text">Rate on a scale 1 being emotionally cold to others,5 being very kind and helpful to others</p>
+                ({{ form.agreeableness.label }}):
+            </label>
+            {{ form.agreeableness }}
+        </div>
+        
+        <div class="form-group">
+            <label for="neuroticism" class="form-label">
+                <strong>Are you prone to worry a lot and be anxious or Are you usually very calm in emotional situations?</strong>
+                <p class="small-text">Rate on a scale 1 being very anxious and moody usually,5 being very calm and relaxed in emotional situations</p>
+                ({{ form.neuroticism.label }}):
+            </label>
+            {{ form.neuroticism }}
+        </div>
+        
+        <div class="form-group">
+            <label for="openness" class="form-label">
+                <strong>Do you prefer the simple, less sophisticated and mundane or Do you appreciate new experiences and have a wide range of interests?</strong>
+                <p class="small-text">Rate on a scale 1 being simple and uncreative,5 being very open to new things and very creative</p>
+                ({{ form.openness.label }}):
+            </label>
+            {{ form.openness }}
+        </div>
+        
+        <div class="form-group">
+            <label for="extroversion" class="form-label">
+                <strong>Are you very reserved and quiet in social situations or Are you very talkative, very assertive and bold in social situations?</strong>
+                <p class="small-text">Rate on a scale 1 being socially awkward, 5 being very active, bold and talkative</p>
+                ({{ form.extroversion.label }}):
+            </label>
+            {{ form.extroversion }}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Submit</button>
+        
+    </form>
+</div>
+
+{% endblock %}

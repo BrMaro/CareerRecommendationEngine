@@ -2,6 +2,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.db import models
 from django.contrib.auth.models import User
+from .models import QuestionnaireData
+
+
+
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(label="Email", max_length=200)
@@ -18,71 +22,59 @@ class RegisterForm(UserCreationForm):
         self.fields['password1'].label = "Password"
         self.fields['password2'].label = "Confirm Password"
 
+
 class AuthenticationForm(forms.Form):
     username = forms.CharField(label="Username")
     password = forms.CharField(label="Password", widget=forms.PasswordInput)
 
 
-class QuestionnaireForm(forms.Form):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    age = forms.IntegerField(label="age")
-    agp = forms.IntegerField(label="Average Grade Points(AGP)")
-    # INTEREST_CHOICES = [
-    # "Graphic Design", "Blogging", "Amateur Astronomy", "Cooking Classes", "Gardening",
-    # "Homebrewing Coffee", "Magic Tricks", "Hiking", "Learning Languages", "Podcasting",
-    # "Chess", "Photography", "Bird Watching", "Origami", "Archery", "Stand-up Comedy",
-    # "Music Composition", "Pottery", "Calligraphy", "Running", "Yoga", "Tennis",
-    # "Swimming", "Rock Climbing", "Cycling", "Badminton", "Chess Boxing", "Martial Arts",
-    # "Sailing", "Rowing", "Archery", "Soccer", "Skiing", "Gymnastics", "Polo", "Kickboxing",
-    # "Volleyball", "Basketball", "Drama Club", "Orchestra or Band", "Debate Team",
-    # "Relay Races", "Volunteering Group", "Quiz Team", "Dance Troupe", "Rowing Crew",
-    # "Chess Club", "Book Club", "Film-Making Group", "Chorale Group", "Tech Club",
-    # "Competitive Gaming Team", "Environmental Conservation Group", "Innovation Lab",
-    # "DIY Crafting Club", "Storm Chasing", "Beekeeping", "Falconry", "Underwater Hockey",
-    # "Bonsai Cultivation", "Capoeira", "Ice Sculpting", "Parkour", "Astro-Photography",
-    # "Ghost Hunting", "Acrobatics", "Competitive Eating", "Sand Sculpting", "Aerial Silks",
-    # "LARPing", "Puppetry", "Cryptozoology", "Fencing", "Pyrography", "Skydiving",
-    # "Analytical Hobbies And Interests", "Sudoku", "Programming", "Data Analysis",
-    # "Reading Scientific Journals", "Cryptozoology", "Philosophical Debates", "Cryptography",
-    # "Economic Forecasting", "Astronomy", "Birdwatching", "Genealogy", "Bridge",
-    # "Model Building", "DIY Electronics", "Numismatics", "Technical Hobbies And Interests",
-    # "Coding", "Robotics", "Computer Building", "Web Development", "Amateur Radio Operation",
-    # "Photography & Photo Editing", "Software Beta Testing", "Video Production", "Advanced Excel",
-    # "Game Development", "Home Networking", "Linux Administration", "Building Drones",
-    # "3D Printing", "Data Analysis", "Cryptocurrency Trading", "Machine Learning Projects"
-    # ]
+class QuestionnaireForm(forms.ModelForm):
 
-    # interests = forms.MultipleChoiceField(
-    #     choices=INTEREST_CHOICES,
-    #     widget=forms.CheckboxSelectMultiple
-    # )
+
+    user = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.HiddenInput())
+    age = forms.IntegerField(label="Age", min_value=15, max_value=90)
+    agp = forms.IntegerField(label="Average Grade Points(KCSE points)", min_value=0, max_value=84)
+
+ 
     conscientiousness = forms.ChoiceField(
         label='Conscientiousness',
         choices=[(str(i), str(i)) for i in range(1, 6)],
         widget=forms.Select(attrs={'class': 'form-control'}),
-        help_text="The degree to which a person prefers to plan ahead rather than being spontaneous."
+        help_text="The degree to which a person prefers to plan ahead rather than being spontaneous.",
+        required=True
     )
     agreeableness = forms.ChoiceField(
         label='Agreeableness',
         choices=[(str(i), str(i)) for i in range(1, 6)],
         widget=forms.Select(attrs={'class': 'form-control'}),
-        help_text="How strongly a person tends to be kind, sympathetic, and helpful to others."
+        help_text="How strongly a person tends to be kind, sympathetic, and helpful to others.",
+        required=True
+
     )
     neuroticism = forms.ChoiceField(
         label='Neuroticism',
         choices=[(str(i), str(i)) for i in range(1, 6)],
         widget=forms.Select(attrs={'class': 'form-control'}),
-        help_text="The extent to which someone is inclined to worry or be temperamental."
+        help_text="The extent to which someone is inclined to worry or be temperamental.",
+        required=True
+
     )
     openness = forms.ChoiceField(
         label='Openness',
         choices=[(str(i), str(i)) for i in range(1, 6)],
         widget=forms.Select(attrs={'class': 'form-control'}),
-        help_text="The extent to which a person has an appreciation for a variety of experiences."
+        help_text="The extent to which a person has an appreciation for a variety of experiences.",
+        required=True
+
     )
     extroversion = forms.ChoiceField(
         label='Extroversion',
         choices=[(str(i), str(i)) for i in range(1, 6)],
         widget=forms.Select(attrs={'class': 'form-control'}),
-        help_text="The extent to which a person tends to prefer being sociable, outgoing, and talkative."
+        help_text="The extent to which a person tends to prefer being sociable, outgoing, and talkative.",
+        required=True
     )
+
+    class Meta:
+        model = QuestionnaireData  # Specify the model class
+        fields = ['age', 'agp', 'conscientiousness', 'agreeableness', 'neuroticism', 'openness', 'extroversion']

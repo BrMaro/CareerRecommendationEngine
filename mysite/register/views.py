@@ -5,6 +5,7 @@ from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
 from .forms import RegisterForm
 from .forms import QuestionnaireForm
+from .models import QuestionnaireData
 
 
 # Create your views here.
@@ -46,26 +47,31 @@ def logout_user(request):
 
 
 def recommendations(request):
+    user = request.user
+    if QuestionnaireData.objects.filter(user=request.user).exists():
+        print(f"{request.user} data already saved")
+        return render(request, "register/recommendations.html")
+
     if request.method == "POST":
-        form = QuestionnaireForm(request,request.POST)
+        form = QuestionnaireForm(request.POST)
         if form.is_valid():
-            data = form.cleaned_data
-            questionnaire_data = QuestionnaireForm(
-                user=request.user,
-                age=data['age'],
-                agp=data['agp'],
-                interests=', '.join(data['interests']),
-                conscientiousness=data['conscientiousness'],
-                agreeableness=data['agreeableness'],
-                neuroticism=data['neuroticism'],
-                openness=data['openness'],
-                extroversion=data['extroversion']
-            )
+              form = QuestionnaireForm(request.POST)
+        if form.is_valid():
+            questionnaire_data = form.save(commit=False)
+            questionnaire_data.user = user  # Associate with the current user
             questionnaire_data.save()
 
-            return render(request,"register/recommendations.html")
+            print("questionnaire_data saved to model")
+            return render(request, "register/recommendations.html")
+
+        else:
+            print("invalid form")
+            print(form.errors)  # Print the form errors for debugging
+            messages.error(request, 'Invalid input. Please try again.')
+
+            return render(request, "register/questionnaire.html",{'form': form})
     else:
         form = QuestionnaireForm()
-        return render(request, 'register/recommendations.html', {'form': form})
+        return render(request, 'register/questionnaire.html', {'form': form})
             
 

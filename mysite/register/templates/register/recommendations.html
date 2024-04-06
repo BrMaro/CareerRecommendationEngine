@@ -1,75 +1,15 @@
-{% extends 'main/base.html' %}
+{% extends "main/base.html" %}
 
 {% block title %} Recommendations {% endblock %}
 
 {% block content %}
 
-<div class="container">
-    <h1 class="mt-5 mb-4">Complete the Questionnaire</h1>
-    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
-        {% csrf_token %}
-        
-        <div class="mb-3">
-            <label for="age" class="form-label">{{ form.age.label }}</label>
-            {{ form.age }}
-            <div class="invalid-feedback">
-                Please provide a valid age.
-            </div>
-        </div>
 
-        <div class="mb-3">
-            <label for="agp" class="form-label">{{ form.agp.label }}</label>
-            {{ form.agp }}
-            <div class="invalid-feedback">
-                Please provide a valid AGP.
-            </div>
-        </div>
 
-        <div class="mb-3">
-            <label for="conscientiousness" class="form-label">{{ form.conscientiousness.label }}</label>
-            <span data-bs-toggle="tooltip" title="{{ form.conscientiousness.help_text }}">
-                {{ form.conscientiousness }}
-            </span>
-        </div>
 
-        <div class="mb-3">
-            <label for="agreeableness" class="form-label">{{ form.agreeableness.label }}</label>
-            <span data-bs-toggle="tooltip" title="{{ form.agreeableness.help_text }}">
-                {{ form.agreeableness }}
-            </span>
-        </div>
 
-        <div class="mb-3">
-            <label for="neuroticism" class="form-label">{{ form.neuroticism.label }}</label>
-            <span data-bs-toggle="tooltip" title="{{ form.neuroticism.help_text }}">
-                {{ form.neuroticism }}
-            </span>
-        </div>
 
-        <div class="mb-3">
-            <label for="openness" class="form-label">{{ form.openness.label }}</label>
-            <span data-bs-toggle="tooltip" title="{{ form.openness.help_text }}">
-                {{ form.openness }}
-            </span>
-        </div>
 
-        <div class="mb-3">
-            <label for="extroversion" class="form-label">{{ form.extroversion.label }}</label>
-            <span data-bs-toggle="tooltip" title="{{ form.extroversion.help_text }}">
-                {{ form.extroversion }}
-            </span>
-        </div>
 
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</div>
 
-<script>
-    // Initialize Bootstrap tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    });
-</script>
-
-{% endblock %}
+{% endblock}
