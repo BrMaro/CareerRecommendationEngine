@@ -48,6 +48,12 @@ def logout_user(request):
 
 def recommendations(request):
     user = request.user
+
+    
+
+
+
+
     if QuestionnaireData.objects.filter(user=request.user).exists():
         print(f"{request.user} data already saved")
         return render(request, "register/recommendations.html")
@@ -55,8 +61,7 @@ def recommendations(request):
     if request.method == "POST":
         form = QuestionnaireForm(request.POST)
         if form.is_valid():
-              form = QuestionnaireForm(request.POST)
-        if form.is_valid():
+            form = QuestionnaireForm(request.POST)
             questionnaire_data = form.save(commit=False)
             questionnaire_data.user = user  # Associate with the current user
             questionnaire_data.save()
