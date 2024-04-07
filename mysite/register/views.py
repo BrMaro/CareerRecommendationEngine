@@ -6,11 +6,10 @@ from django.contrib import messages
 from .forms import RegisterForm,QuestionnaireForm
 from .models import QuestionnaireData,PreferredCourse
 from main.models import Course
-from sklearn.metrics.pairwise import euclidean_distances
-from sklearn.decomposition import NMF
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 from django.contrib.auth.models import User
+from sklearn.metrics.pairwise import cosine_similarity
+import random
+from collections import defaultdict
 
 
 collaborative_filtering_model = None
@@ -60,9 +59,8 @@ def questionnaire_view(request):
     if QuestionnaireData.objects.filter(user=request.user).exists():
         questionnaire_data = QuestionnaireData.objects.filter(user=request.user)
         print(f"{request.user} data already saved")
-        update_recommendation_models(user,questionnaire_data)
         recommended_courses = get_recommendations(user)
-        return render(request, "register/recommendations.html", {'recommendations': recommended_courses})
+        return render(request, "register/recommendations.html", {'recommended_courses': recommended_courses})
 
     if request.method == "POST":
         form = QuestionnaireForm(request.POST)
@@ -73,7 +71,6 @@ def questionnaire_view(request):
             questionnaire_data.save()
 
             print("questionnaire_data saved to model")
-            update_recommendation_models(user, questionnaire_data)  # Update recommendation models
 
             recommendations = get_recommendations(user)
             return render(request, "register/recommendations.html", {'recommendations': recommended_courses})
@@ -101,117 +98,59 @@ def recommendations(request):
     return render(request, "register/recommendations.html", {'recommended_courses': recommended_courses})
 
 
-
-
-def update_recommendation_models(user, questionnaire_data):
-    global collaborative_filtering_model
-    global content_based_filtering_model
-    
-    # Update collaborative filtering model
-    # collaborative_filtering_model = update_collaborative_filtering(user)
-    
-    # Update content-based filtering model
-    content_based_filtering_model = update_content_based_filtering()
-
-    
+# Function to get course recommendations for a user
 def get_recommendations(user):
-    print("get recommendations start ")
-    # collaborative_recommendations = get_collaborative_filtering_recommendations(user)
-    content_based_recommendations = get_content_based_filtering_recommendations(user)
-    recommendations =  content_based_recommendations # + collaborative_recommendations
-    print("get recommendations end ")
+    print("Getting recommendations for user:", user.username)
 
-    return recommendations
+    user_data = QuestionnaireData.objects.filter(user=user).first()
+    if not user_data:
+        print("User data not found.")
+        return []
 
+    # Get all users excluding the current one
+    all_users = User.objects.exclude(pk=user.pk)
+    print("Total users:", len(all_users))
 
-# def update_collaborative_filtering(user):
-#     print("update_collaborative_filtering start")
+    # Collect questionnaire data for all users
+    questionnaire_data_dict = defaultdict(list)
+    for other_user in all_users:
+        other_user_data = QuestionnaireData.objects.filter(user=other_user).first()
+        if other_user_data:
+            questionnaire_data_dict[other_user.id].append([
+                other_user_data.age, other_user_data.agp, other_user_data.conscientiousness,
+                other_user_data.agreeableness, other_user_data.neuroticism,
+                other_user_data.openness, other_user_data.extroversion
+            ])
 
-#     # Retrieve preferred courses for the user from the database
-#     preferred_courses = PreferredCourse.objects.filter(user=user)
-#     courses = Course.objects.all()
-    
-#     # Prepare data for matrix factorization
-#     user_matrix = []
-#     for course in courses:
-#         if preferred_courses.filter(course=course).exists():
-#             user_matrix.append(1)
-#         else:
-#             user_matrix.append(0)
-    
-#     # Initialize and fit NMF model
-#     nmf_model = NMF(n_components=5, random_state=42)
-#     nmf_model.fit([user_matrix])  # Pass user_matrix as a list
-    
-#     print("Collaborative filtering model created:", nmf_model)  # Debugging statement
-#     print("update_collaborative_filtering end")
-#     return nmf_model
+    print("Collected questionnaire data for users.")
 
+    # Calculate cosine similarity between the current user and all other users
+    similarity_scores = {}
+    for user_id, data in questionnaire_data_dict.items():
+        similarity_scores[user_id] = cosine_similarity([user_data], data)[0][0]
 
-def update_content_based_filtering():
-    # Extract user personality traits and AGP
-    user_data = QuestionnaireData.objects.all().values_list(
-        'conscientiousness', 'agreeableness', 'neuroticism', 'openness', 'extroversion', 'agp','age'
-    )
+    print("Calculated similarity scores.")
 
-    # Compute distances between users based on personality traits and AGP
-    user_distances = euclidean_distances(user_data, user_data)
+    # Sort users based on similarity
+    sorted_users = sorted(similarity_scores.items(), key=lambda x: x[1], reverse=True)
+    print("Sorted users based on similarity.")
 
-    return user_distances
+    # Get preferred courses of similar users
+    similar_users_courses = PreferredCourse.objects.filter(user_id__in=[user_id for user_id, _ in sorted_users[:5]])
+    print("Collected courses of similar users.")
 
+    # Exclude courses already preferred by the current user
+    user_preferred_courses = PreferredCourse.objects.filter(user=user)
+    recommended_courses = similar_users_courses.exclude(course__in=user_preferred_courses.values_list('course', flat=True))
 
-# def get_collaborative_filtering_recommendations(user):
-#     print("get_collaborative_filtering start")
-#     global collaborative_filtering_model
-    
-#     # Extract preferred courses for the user
-#     preferred_courses = PreferredCourse.objects.filter(user=user)
-#     preferred_course_ids = [pc.course_id for pc in preferred_courses]
-#     print(1)
-#     # Extract all courses
-#     courses = Course.objects.all()
-#     print(2)
-#     # Initialize user vector
-#     user_vector = [1 if course.course_id in preferred_course_ids else 0 for course in courses]
-#     print(3)
-#     # Use collaborative filtering model for recommendations
-#     user_embedding = collaborative_filtering_model.transform([user_vector])
-#     recommendations = []
-#     print(4)
-#     # Calculate scores for each course
-#     for i, course in enumerate(courses):
-#         score = cosine_similarity(user_embedding, collaborative_filtering_model.components_[:, i].reshape(1, -1))[0][0]
-#         recommendations.append((course, score))
-#     print(5)
-#     # Sort recommendations by score
-#     recommendations.sort(key=lambda x: x[1], reverse=True)
-#     print("get_collaborative_filtering end")
+    # If there are not enough similar courses, add some random courses
+    if len(recommended_courses) < 10:
+        random_courses = Course.objects.exclude(course_id__in=[course.course.id for course in recommended_courses])
+        random_recommendations = random.sample(list(random_courses), min(10 - len(recommended_courses), len(random_courses)))
+        recommended_courses = list(recommended_courses) + random_recommendations
 
-#     return recommendations[:5]  # Return top 5 recommendations
+    print(recommended_courses)
+    print("Generated recommendations.")
 
+    return recommended_courses
 
-def get_content_based_filtering_recommendations(user):
-    print("get_content_based_filtering start")
-    global content_based_filtering_model
-    
-    if content_based_filtering_model is None:
-        content_based_filtering_model = update_content_based_filtering()
-
-    user_data = QuestionnaireData.objects.filter(user=user).values_list(
-        'conscientiousness', 'agreeableness', 'neuroticism', 'openness', 'extroversion', 'agp','age'
-    )[0]
-
-    # Compute distances between the user and all other users based on personality traits and AGP
-    distances_to_other_users = content_based_filtering_model[user.pk, :]  # Assuming user.pk is the index
-    
-    # Find indices of users with similar personality traits and AGP
-    similar_user_indices = distances_to_other_users.argsort()
-
-    # Exclude the user itself from recommendations
-    similar_user_indices = similar_user_indices[similar_user_indices != user.pk]
-
-    # Get top 5 similar users
-    similar_users = User.objects.filter(pk__in=similar_user_indices[:5])
-    print("get_content_based_filtering end")
-
-    return similar_users
