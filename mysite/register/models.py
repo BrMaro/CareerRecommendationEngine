@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from main.models import Course
 
 class QuestionnaireData(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -13,3 +14,10 @@ class QuestionnaireData(models.Model):
 
     def __str__(self):
         return f"QuestionnaireData for user {self.user.username}"
+
+class PreferredCourse(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.course}"

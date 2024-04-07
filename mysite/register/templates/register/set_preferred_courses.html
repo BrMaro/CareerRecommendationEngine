@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+
+{% block title %} Recommendations {% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <ul>
+      {% for course in recommended_courses %}
+        <li>
+          <input type="checkbox" id="{{ course.course_id }}" name="locked_courses" value="{{ course.course_id }}">
+          <label for="{{ course.course_id }}">{{ course.programme_name }}</label>
+        </li>
+      {% endfor %}
+    </ul>
+    <button type="submit">Lock Selected Courses</button>
+  </form>
+  <br>
+  <a href="{% url 'get_new_recommendations' %}">Get New Recommendations</a>
+
+{% endblock %}
