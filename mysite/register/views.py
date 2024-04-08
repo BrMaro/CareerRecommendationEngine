@@ -25,6 +25,10 @@ def register(request):
         if form.is_valid():
             form.save()
             return redirect("/home")
+        else:
+            messages.error(request,"Invalid Input")
+            return render(request, "register/register.html", {"form": form, "user": request.user})
+
     else:
         form = RegisterForm()
         return render(request, "register/register.html", {"form": form, "user": request.user})
@@ -99,9 +103,11 @@ def recommendations(request):
         print("Request method is POST")
         if form.is_valid():
             locked_courses = form.cleaned_data.get('locked_courses')
+            unchecked_courses_ids = set(user_preferred_course_ids) - set(checked_courses)
+            PreferredCourse.objects.filter(user=user, course_id__in=unchecked_courses_ids).delete()
             for course_id in locked_courses:
                 PreferredCourse.objects.get_or_create(user=user, course=course_id)
-            messages.success(request, 'Courses locked successfully!')
+            messages.success(request, 'Preferred Courses saved Successfully!')
             checked_courses = request.POST.getlist('locked_courses')
 
             return redirect('recommendations')
