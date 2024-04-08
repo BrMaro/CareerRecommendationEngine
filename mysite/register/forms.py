@@ -2,6 +2,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from django.contrib.auth.models import User
 from .models import QuestionnaireData
+from main.models import Course
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(label="Email", max_length=200)
@@ -25,7 +26,6 @@ class AuthenticationForm(forms.Form):
 
 
 class QuestionnaireForm(forms.ModelForm):
-
 
     user = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.HiddenInput())
     age = forms.IntegerField(label="Age", min_value=15, max_value=90)
@@ -74,3 +74,12 @@ class QuestionnaireForm(forms.ModelForm):
     class Meta:
         model = QuestionnaireData  # Specify the model class
         fields = ['age', 'agp', 'conscientiousness', 'agreeableness', 'neuroticism', 'openness', 'extroversion']
+
+
+class LockCoursesForm(forms.Form):
+    locked_courses = forms.ModelMultipleChoiceField(queryset=None, widget=forms.CheckboxSelectMultiple)
+
+    def __init__(self, *args, **kwargs):
+        super(LockCoursesForm, self).__init__(*args, **kwargs)
+        # Populate queryset dynamically
+        self.fields['locked_courses'].queryset = Course.objects.all()

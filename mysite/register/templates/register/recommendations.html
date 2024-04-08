@@ -1,15 +1,67 @@
-{% extends "main/base.html" %}
+{% extends 'main/base.html' %}
 
 {% block title %} Recommendations {% endblock %}
 
 {% block content %}
+  <style>
+    /* recommendations.css */
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background-color: #000000;
+      padding: 0.6rem 1rem;
+      border-radius: 0.3rem;
+      color: white; /* Changed text color to black */
+      margin-bottom: 0.7rem;
+      opacity: 0;
+    }
+
+    ul.show li {
+      animation-name: fadeIn;
+      animation-timing-function: ease-in-out;
+      animation-duration: 350ms;
+      animation-delay: calc(var(--count) * 250ms);
+      animation-fill-mode: both;
+    }
+
+    label {
+      color: white; /* Changed label color to white */
+      font-weight: bold; /* Made label text bold */
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
 
 
+  </style>
+ <form method="post">
+  {% csrf_token %}
+  <ul class="show"> <!-- Added 'show' class here -->
+    {% for course in recommended_courses %}
+    <li>
+      <input type="checkbox" id="{{ course.course_id }}" name="locked_courses" value="{{ course.course_id }}" {% if course.course_id in user_preferred_course_ids %}checked{% endif %}>
+      <label for="{{ course.course_id }}"><a href="{% url 'certifications_by_programme' programme_name=course.programme_name %}">{{ course.programme_name }}</a></label>
+    </li>
+    {% endfor %}
+  </ul>
+  <button type="submit">Lock Courses</button>
+</form>
 
-
-
-
+<br>
+<a href="{% url 'update_recommendations' %}">Refresh</a>
 
 
 {% endblock %}

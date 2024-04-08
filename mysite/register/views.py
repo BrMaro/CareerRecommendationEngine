@@ -3,7 +3,7 @@ from django.contrib.auth import login,authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login,logout,authenticate
 from django.contrib import messages
-from .forms import RegisterForm,QuestionnaireForm
+from .forms import RegisterForm,QuestionnaireForm,LockCoursesForm
 from .models import QuestionnaireData,PreferredCourse
 from main.models import Course
 from django.contrib.auth.models import User
@@ -56,51 +56,75 @@ def logout_user(request):
 
 def questionnaire_view(request):
     user = request.user
+    print("In questionnaire_view function")
+
     if QuestionnaireData.objects.filter(user=request.user).exists():
+        print("User data already exists")
         questionnaire_data = QuestionnaireData.objects.filter(user=request.user)
-        print(f"{request.user} data already saved")
-        recommended_courses = get_recommendations(user)
-        return render(request, "register/recommendations.html", {'recommended_courses': recommended_courses})
-
-    if request.method == "POST":
-        form = QuestionnaireForm(request.POST)
-        if form.is_valid():
-            form = QuestionnaireForm(request.POST)
-            questionnaire_data = form.save(commit=False)
-            questionnaire_data.user = user  # Associate with the current user
-            questionnaire_data.save()
-
-            print("questionnaire_data saved to model")
-
-            recommendations = get_recommendations(user)
-            return render(request, "register/recommendations.html", {'recommendations': recommended_courses})
-
-
-        else:
-            messages.error(request, 'Invalid input. Please try again.')
-
-            return render(request, "register/questionnaire.html",{'form': form})
+        print(f"redirecting to recommendations view")
+        return redirect('recommendations')
+    
     else:
-        form = QuestionnaireForm()
-        return render(request, 'register/questionnaire.html', {'form': form}) 
+        if request.method == "POST":
+            form = QuestionnaireForm(request.POST)
+            if form.is_valid():
+                form = QuestionnaireForm(request.POST)
+                questionnaire_data = form.save(commit=False)
+                questionnaire_data.user = user  # Associate with the current user
+                questionnaire_data.save()
+
+                print("questionnaire_data saved to model")
+
+                return redirect('recommendations')
+            else:
+                messages.error(request, 'Invalid input. Please try again.')
+
+                return render(request, "register/questionnaire.html",{'form': form})
+        else:
+            form = QuestionnaireForm()
+
+            return render(request, 'register/questionnaire.html', {'form': form}) 
 
 
 def recommendations(request):
     user = request.user
-    recommended_courses = get_recommendations(user)
-    
+    print("In recommendations function")
+
+    form = LockCoursesForm(request.POST or None)
+    user_preferred_courses = PreferredCourse.objects.filter(user=user)
+    user_preferred_course_ids = [course.course_id for course in user_preferred_courses]
+    checked_courses = []
+
     if request.method == "POST":
-        locked_courses = request.POST.getlist('locked_courses')
-        for course_id in locked_courses:
-            PreferredCourse.objects.create(user=user, course_id=course_id)
-        return redirect('register/recommendations.html')
+        print("Request method is POST")
+        if form.is_valid():
+            locked_courses = form.cleaned_data.get('locked_courses')
+            for course_id in locked_courses:
+                PreferredCourse.objects.get_or_create(user=user, course=course_id)
+            messages.success(request, 'Courses locked successfully!')
+            checked_courses = request.POST.getlist('locked_courses')
+
+            return redirect('recommendations')
+        
+    # Automatically lock the checked courses
+    if 'new_recommendations' in request.POST:
+        print("New recommendations requested")
+        checked_courses = request.POST.getlist('locked_courses')
+        for course_id in checked_courses:
+            PreferredCourse.objects.get_or_create(user=user, course_id=course_id)
     
-    return render(request, "register/recommendations.html", {'recommended_courses': recommended_courses})
+    recommended_courses = get_recommendations(user, checked_courses)
+    print("checked_courses",checked_courses)
+    context = {
+        'recommended_courses': recommended_courses,
+        'form': form,
+        'user_preferred_course_ids': user_preferred_course_ids,
+    }
+    return render(request, "register/recommendations.html", context)
 
 
-# Function to get course recommendations for a user
-def get_recommendations(user):
-    print("Getting recommendations for user:", user.username)
+def get_recommendations(user, checked_courses_ids):
+    print("In get_recommendations function")
 
     user_data = QuestionnaireData.objects.filter(user=user).first()
     if not user_data:
@@ -145,12 +169,31 @@ def get_recommendations(user):
 
     # If there are not enough similar courses, add some random courses
     if len(recommended_courses) < 10:
-        random_courses = Course.objects.exclude(course_id__in=[course.course.id for course in recommended_courses])
+        random_courses = Course.objects.exclude(course_id__in=[course.course_id for course in recommended_courses])
         random_recommendations = random.sample(list(random_courses), min(10 - len(recommended_courses), len(random_courses)))
         recommended_courses = list(recommended_courses) + random_recommendations
 
-    print(recommended_courses)
+    # Add locked-in courses to the recommendations list
+    locked_courses = user_preferred_courses.values_list('course', flat=True)
+    locked_courses_objects = Course.objects.filter(course_id__in=locked_courses)
+    for course in locked_courses_objects:
+        if course not in recommended_courses and course.course_id not in checked_courses_ids:
+            recommended_courses.append(course)
+
     print("Generated recommendations.")
 
     return recommended_courses
 
+
+def update_recommendations(request):
+    user = request.user
+    if request.method == "POST":
+        locked_courses = request.POST.getlist('locked_courses')
+        # Clear previously locked courses for the user
+        PreferredCourse.objects.filter(user=user).delete()
+        # Add newly locked courses
+        for course_id in locked_courses:
+            PreferredCourse.objects.create(user=user, course_id=course_id)
+        # Redirect to recommendations
+        return redirect('recommendations')
+    return redirect('recommendations')
