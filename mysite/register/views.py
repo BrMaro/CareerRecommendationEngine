@@ -146,19 +146,25 @@ def get_recommendations(user, checked_courses_ids):
     for other_user in all_users:
         other_user_data = QuestionnaireData.objects.filter(user=other_user).first()
         if other_user_data:
-            questionnaire_data_dict[other_user.id].append([
+            questionnaire_data_dict[other_user.id].extend([
                 other_user_data.age, other_user_data.agp, other_user_data.conscientiousness,
                 other_user_data.agreeableness, other_user_data.neuroticism,
                 other_user_data.openness, other_user_data.extroversion
             ])
-
     print("Collected questionnaire data for users.")
+
+    # Convert user_data to a list
+    user_data_list = [
+        user_data.age, user_data.agp, user_data.conscientiousness,
+        user_data.agreeableness, user_data.neuroticism,
+        user_data.openness, user_data.extroversion
+    ]
 
     # Calculate cosine similarity between the current user and all other users
     similarity_scores = {}
     for user_id, data in questionnaire_data_dict.items():
-        similarity_scores[user_id] = cosine_similarity([user_data], data)[0][0]
-
+        data = [data]  # Convert data to a list of lists
+        similarity_scores[user_id] = cosine_similarity([user_data_list], data)[0][0]
     print("Calculated similarity scores.")
 
     # Sort users based on similarity
@@ -167,11 +173,22 @@ def get_recommendations(user, checked_courses_ids):
 
     # Get preferred courses of similar users
     similar_users_courses = PreferredCourse.objects.filter(user_id__in=[user_id for user_id, _ in sorted_users[:5]])
+
+    # Filter out courses with empty programme_nameS
+    similar_users_courses = similar_users_courses.exclude(course__programme_name='')
+
     print("Collected courses of similar users.")
+
 
     # Exclude courses already preferred by the current user
     user_preferred_courses = PreferredCourse.objects.filter(user=user)
-    recommended_courses = similar_users_courses.exclude(course__in=user_preferred_courses.values_list('course', flat=True))
+    user_preferred_course_ids = user_preferred_courses.values_list('course_id', flat=True)
+    recommended_courses = similar_users_courses.exclude(course__in=user_preferred_course_ids)
+    recommended_courses = list(recommended_courses)
+    recommended_courses = [course.course for course in recommended_courses]
+
+    print(recommended_courses)
+
 
     # If there are not enough similar courses, add some random courses
     if len(recommended_courses) < 10:
@@ -179,16 +196,19 @@ def get_recommendations(user, checked_courses_ids):
         random_recommendations = random.sample(list(random_courses), min(10 - len(recommended_courses), len(random_courses)))
         recommended_courses = list(recommended_courses) + random_recommendations
 
+
     # Add locked-in courses to the recommendations list
     locked_courses = user_preferred_courses.values_list('course', flat=True)
     locked_courses_objects = Course.objects.filter(course_id__in=locked_courses)
     for course in locked_courses_objects:
         if course not in recommended_courses and course.course_id not in checked_courses_ids:
             recommended_courses.append(course)
+    
 
     print("Generated recommendations.")
 
     return recommended_courses
+
 
 
 def update_recommendations(request):

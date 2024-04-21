@@ -3,101 +3,107 @@
 {% block title %} Recommendations {% endblock %}
 
 {% block content %}
-<style>
-  /* recommendations.css */
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
+<div class="container">
+  <h1>Unlock Your Learning Journey</h1>
+  <p>Welcome to your personalized recommendations!</p>
+  <hr>
 
-  li {
-    background-color: #f8f9fa; /* Match Bootstrap card background */
-    padding: 0.6rem 1rem;
-    border-radius: 0.3rem;
-    color: #000; /* Match Bootstrap card text color */
-    margin-bottom: 0.7rem;
-    opacity: 0;
-  }
+  <h2>Recommendations</h2> <!-- Added subheading for the recommendation listing -->
 
-  ul.show li {
-    animation-name: fadeIn;
-    animation-timing-function: ease-in-out;
-    animation-duration: 350ms;
-    animation-delay: calc(var(--count) * 250ms);
-    animation-fill-mode: both;
-  }
+  <style>
+    /* recommendations.css */
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
 
-  label {
-    cursor: pointer;
-    font-weight: bold;
-  }
-
-  input[type="checkbox"] {
-    display: none;
-  }
-
-  input[type="checkbox"] + label {
-    position: relative;
-    padding-left: 25px;
-  }
-
-  input[type="checkbox"] + label:before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 20px;
-    height: 20px;
-    border: 1px solid #adb5bd; /* Match Bootstrap card text color */
-    background-color: #fff;
-    border-radius: 4px;
-  }
-
-  input[type="checkbox"]:checked + label:before {
-    content: "\2713";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 20px;
-    height: 20px;
-    border: 1px solid #adb5bd; /* Match Bootstrap card text color */
-    background-color: #007bff; /* Match Bootstrap primary color */
-    color: #fff;
-    border-radius: 4px;
-    text-align: center;
-    line-height: 20px;
-  }
-
-  @keyframes fadeIn {
-    0% {
+    li {
+      background-color: #f8f9fa; /* Match Bootstrap card background */
+      padding: 0.6rem 1rem;
+      border-radius: 0.3rem;
+      color: #000; /* Match Bootstrap card text color */
+      margin-bottom: 0.7rem;
       opacity: 0;
-      transform: translateY(-20px);
     }
 
-    100% {
-      opacity: 1;
-      transform: translateY(0);
+    ul.show li {
+      animation-name: fadeIn;
+      animation-timing-function: ease-in-out;
+      animation-duration: 350ms;
+      animation-fill-mode: both;
     }
-  }
-</style>
 
-<form method="post">
-  {% csrf_token %}
-  <ul class="show"> <!-- Added 'show' class here -->
-    {% for course in recommended_courses %}
-    <li>
-      <input type="checkbox" id="{{ course.course_id }}" name="locked_courses" value="{{ course.course_id }}" {% if course.course_id in user_preferred_course_ids %}checked{% endif %}>
-      <label for="{{ course.course_id }}"><a href="{% url 'certifications_by_programme' programme_name=course.programme_name %}">{{ course.programme_name }}</a></label>
-    </li>
-    {% endfor %}
-  </ul>
-  <button type="submit" class="btn btn-primary">Lock Courses</button>
-</form>
+    label {
+      cursor: pointer;
+      font-weight: bold;
+    }
 
-<br>
+    input[type="checkbox"] {
+      display: none;
+    }
 
-<div class="text-center"> <!-- Centered link wrapper -->
-  <a href="{% url 'update_recommendations' %}" class="btn btn-secondary">Refresh</a>
+    input[type="checkbox"] + label {
+      position: relative;
+      padding-left: 25px;
+    }
+
+    input[type="checkbox"] + label:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      border: 1px solid #adb5bd; /* Match Bootstrap card text color */
+      background-color: #fff;
+      border-radius: 4px;
+    }
+
+    input[type="checkbox"]:checked + label:before {
+      content: "\2713";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 20px;
+      height: 20px;
+      border: 1px solid #adb5bd; /* Match Bootstrap card text color */
+      background-color: #007bff; /* Match Bootstrap primary color */
+      color: #fff;
+      border-radius: 4px;
+      text-align: center;
+      line-height: 20px;
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+
+  <form method="post">
+    {% csrf_token %}
+    <ul class="{% if recommended_courses %}show{% endif %}"> <!-- Added condition to apply 'show' class only if recommended_courses is not empty -->
+      {% for course in recommended_courses %}
+      <li>
+        <input type="checkbox" id="{{ course.course_id }}" name="locked_courses" value="{{ course.course_id }}" {% if course.course_id in user_preferred_course_ids %}checked{% endif %}>
+        <label for="{{ course.course_id }}"><a href="{% url 'certifications_by_programme' programme_name=course.programme_name %}">{{ course.programme_name }}</a></label>
+      </li>
+      {% endfor %}
+    </ul>
+    <button type="submit" class="btn btn-primary">Lock Courses</button>
+  </form>
+
+  <br>
+
+  <div class="text-center"> <!-- Centered link wrapper -->
+    <a href="{% url 'update_recommendations' %}" class="btn btn-secondary">Refresh</a>
+  </div>
 </div>
-
 {% endblock %}
