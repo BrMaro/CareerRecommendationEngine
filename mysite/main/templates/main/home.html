@@ -42,6 +42,8 @@
             text-decoration: none;
             color: inherit;
             cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
 
         .link-style:hover {
@@ -73,7 +75,7 @@
         }
 
         .slider-text {
-            width:50%;
+            width:40%;
             margin-left: 10%;
             color: #ffffffe1;
             font-size: 100%;
@@ -105,6 +107,12 @@
             flex-direction: row;
             font-size: 0.8em;
             justify-content: space-evenly;
+            gap: 10px;
+            text-align: center;
+        }
+        .text-container div {
+            border-radius: 12px;
+            background: linear-gradient(to bottom right, #EEEAEB, #fff);
         }
 
         .text-container div:hover {
@@ -137,15 +145,27 @@
             align-items: center;
             margin: 20px auto;
         }
+
+        #go-btn {
+            border-radius: 8px;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1em;
+            width: 40%;
+            margin: 10px 2px;
+            cursor: pointer;
+            background: linear-gradient(to bottom right, #2196F3, #000);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
     </style> 
 
     <div class="main-content">
         <div class="image-container" id='home-img'>
             <div class="overlay">
-
-                <!-- <div class="slider-text text1">
-                    <h1>Let's plan your next stage in life</h1>
-                </div> -->
 
                 <div class="slider-text text2">
                     <h2>Unsure about your next academic or career step?</h2>
@@ -166,6 +186,7 @@
                 <a href="{% url 'clusters' %}" class="link-style">
                     <h5>Clusters</h2>
                     <p>Find your field of interests.</p>
+                    <div id="go-btn">Go</div>
                 </a>
             </div>
        
@@ -173,6 +194,7 @@
                 <a href="{% url 'courses' %}" class="link-style">
                     <h5>Courses</h2>
                     <p>Align with your career goals.</p>
+                    <div id="go-btn">Go</div>
                 </a>
             </div>
             
@@ -180,6 +202,8 @@
                 <a href="{% url 'institutions' %}" class="link-style">
                     <h5>Institutions</h2>
                     <p>Explore available campuses and institutions.</p>
+                    <div id="go-btn">Go</div>
+
                 </a>
             </div>
         
@@ -187,6 +211,7 @@
                 <a href="{% url 'questionnaire_view' %}" class="link-style">
                     <h5>Tailored Recommendations</h2>
                     <p>Get access to courses tailored to your specific needs.</p>
+                    <div id="go-btn">Go</div>
                 </a>
             </div>
         
