@@ -6,300 +6,192 @@
 
 
 {% block content %}
-<style>
+    <style>
 
-    #homepage-top {
-        color: #EEEAEB;
-        position: absolute; 
-        top: 50%; 
-        left: 40%; 
-        transform: translate(-50%, -50%);
-    }
-    #homepage-top p {
-        font-size: 20px;
-    }
-
-    .column {
-        flex: 1;
-        padding: 20px;
-        box-sizing: border-box;
-        border: 1px solid #ccc;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        transition: transform 0.3s, box-shadow 0.3s;
-        margin: 10px;
-        border-radius: 10px; /* Add rounded edges */
-
-    }
-
-    .column:hover {
-        transform: scale(1.05);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        background-color: #3E2723; /* Change background color to dark brown on hover */
-        color: #fff; /* Change text color to white on hover */
-    }
-    
-    .link-style {
-        text-decoration: none;
-        color: inherit;
-        cursor: pointer;
-    }
-
-    .link-style:hover {
-        text-decoration: none;
-        color: inherit;
-    }
-
-    .image-container {
-        margin-left: 0px;
-        margin-bottom: 40px;
-        width: 100%;
-        height: 800px; /* Set height according to your requirement */
-        position: relative;
-        z-index: 2;
-        background-image: url("{% static 'images/uncropped.webp' %}");
-        background-size: cover; /* Change to 'cover' to ensure the image covers the entire container */
-        background-repeat: no-repeat;
-        background-position: center;
-    }
-    .overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5); /* Adjust transparency by changing the last value */
-        display: flex; /* Use flexbox for layout */
-        flex-direction: column; /* Arrange items vertically */
-        justify-content: center; /* Center items vertically */
-        padding: 0 20px; /* Add padding */
-    }
-    .slider-text {
-        margin-left: 10%;
-        float: left;
-        position: absolute;
-        bottom: -100%; /* Start the text below the overlay */
-        left: 20px; /* Adjust the starting position from the left */
-        color: #fff; /* Text color */
-        font-size: 20px; /* Adjust font size */
-        animation: slideIn 2s forwards; /* Apply animation */
-    }
-
-    @keyframes slideIn1 {
-        0% {
-            top: 100%; /* Start position */
-            opacity: 0;
+        #homepage-top {
+            color: #EEEAEB;
+            position: absolute;
+            top: 50%;
+            left: 40%;
+            transform: translate(-50%, -50%);
         }
-        100% {
-            top: 5%; /* End position */
-            opacity: 1;
+
+        #homepage-top p {
+            font-size: 20px;
         }
-    }
 
-    @keyframes slideIn2 {
-        0% {
-            top: 100%; /* Start position */
-            opacity: 0;
+        .column {
+            flex: 1;
+            padding: 20px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 10px;
+            border-radius: 10px;
         }
-        100% {
-            top: 45%; /* End position */
-            opacity: 1;
+
+        .column:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            background-color: #3E2723;
+            color: #fff;
         }
-    }
 
-    @keyframes slideIn3 {
-        0% {
-            top: 100%; /* Start position */
-            opacity: 0;
+        .link-style {
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
         }
-        100% {
-            top: 55%; /* End position */
-            opacity: 1;
+
+        .link-style:hover {
+            text-decoration: none;
+            color: inherit;
         }
-    }
 
+        .image-container {
+            width: 100%;
+            height: 50vh;
+            position: relative;
+            background-image: url("{% static 'images/uncropped.webp' %}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
 
-    
-    .text1 {
-        animation: slideIn1 2s forwards;
-    }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom , rgba(0, 0, 0, 0.582) 90%, rgba(255, 255, 255, 1));
+            display: flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            padding: 0 20px;
+        }
 
-    .text2 {
-        animation: slideIn2 2s forwards;
-        animation-delay: 1s; 
-    }
+        .slider-text {
+            width:50%;
+            margin-left: 10%;
+            color: #ffffffe1;
+            font-size: 100%;
+            align-items: center;
+        }
 
-    .text3 {
-        animation: slideIn3 2s forwards;
-        animation-delay: 2s; 
-    }
-    .register-button-in-overlay {
-        animation: slideIn4 2s forwards;
-        animation-delay: 3s; /* Delay the animation for the register button */
-    }
-    
-    .container {
-        position: relative; /* Set the position to relative */
-        z-index: 3; /* Set z-index to make it appear above the image */
-        width: 100%;
-    }
+        .text1 h1, .text2 h2, .text3 h4 {
+            animation: fadeIn 2s forwards;
+        }
+        .text2 h2 {
+            animation-delay: 1s;
+        }
+        .text3 h4 {
+            animation-delay: 2s;
+        }
 
-</style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
 
+        .text-container {
+            margin-top: 4%;
+            display:flex;
+            flex-direction: row;
+            font-size: 0.8em;
+            justify-content: space-evenly;
+        }
 
-<div class="main-content">
-    <div class="image-container" id='home-img'>
-        <div class="overlay">
-            <div class="slider-text text1">
-                <h1>Let's plan your next stage in life</h1>
+        .text-container div:hover {
+            transform: scale(1.05);
+        }
+
+   
+        .start-here-btn {
+            border-radius: 8px;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1em;
+            width: 40%;
+            margin: 10px 2px;
+            cursor: pointer;
+            background: linear-gradient(to bottom right, #2196F3, #000);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .start-here-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .slider-text .start-here-btn {
+            align-items: center;
+            margin: 20px auto;
+        }
+    </style> 
+
+    <div class="main-content">
+        <div class="image-container" id='home-img'>
+            <div class="overlay">
+
+                <!-- <div class="slider-text text1">
+                    <h1>Let's plan your next stage in life</h1>
+                </div> -->
+
+                <div class="slider-text text2">
+                    <h2>Unsure about your next academic or career step?</h2>
+                </div>
+
+                <div class="slider-text">
+                    <div class="start-here-btn">
+                        Start here   
+                    </div>
+                </div>
+
             </div>
-            <div class="slider-text text2">
-                <h2>Unsure about your next academic or career step?</h2>
-            </div>
-            <div class="slider-text text3">
-                <h4>Let's navigate this journey together and unlock the possibilities that await you..</h4>
-            </div>
-
         </div>
-    </div>
-    
-    {% if user.is_authenticated %}
-        <style>
-            .container {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-            }
         
-            .flexbox {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 20px;
-                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Increased shadow */
-                border-radius: 10px; /* Rounded corners */
-                overflow: hidden; /* Hide overflowing content */
-                transition: box-shadow 0.3s, transform 0.3s; /* Smooth transition */
-            }
-        
-            .flexbox:hover {
-                box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5); /* Enhanced shadow on hover */
-                transform: scale(1.05); /* Scale up on hover */
-            }
-        
-            .content, .image {
-                flex: 1;
-                padding: 20px; /* Add padding */
-            }
-        
-            .content {
-                padding-right: 40px; /* Spacing between text and image */
-            }
-        
-            .image img {
-                max-width: calc(100% - 20px); /* Adjust image width */
-                max-height: 240px; /* Increase image height to allow overflow */
-                height: auto;
-                border-radius: 10px; /* Rounded corners */
-                transition: opacity 0.3s; /* Smooth transition */
-                position: relative; /* Positioning for overlay */
-            }
-
-            .image img::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1)); /* Oval gradient */
-                border-radius: 10px; /* Rounded corners */
-            }
-        
-            .flexbox:hover .image img {
-                opacity: 0.8; /* Fade image on hover */
-            }
-        
-            .link-style {
-                text-decoration: none;
-                color: inherit;
-            }
-        </style>    
-        <div class="container">
-            <div class="flexbox">
-                <div class="content">
-                    <a href="{% url 'clusters' %}" class="link-style">
-                        <h2>Clusters</h2>
-                        <p>Explore different clusters of majors to find your interests.</p>
-                    </a>
-                </div>
-                <div class="image">
-                    <img src="{% static 'images/clusters_img.jpg' %}" alt="Clusters Image">
-                </div>
+        <div class="text-container">
+            
+            <div>
+                <a href="{% url 'clusters' %}" class="link-style">
+                    <h5>Clusters</h2>
+                    <p>Find your field of interests.</p>
+                </a>
             </div>
-        <div class="flexbox">
-            <div class="image">
-                <img src="{% static 'images/pexels-pixabay-289737.jpg' %}" alt="Courses Image">
-            </div>
-            <div class="content">
+       
+            <div>
                 <a href="{% url 'courses' %}" class="link-style">
-                    <h2>Courses</h2>
-                    <p>Check out popular courses that might align with your career goals.</p>
+                    <h5>Courses</h2>
+                    <p>Align with your career goals.</p>
                 </a>
             </div>
-        </div>
-        <div class="flexbox">
-            <div class="content">
+            
+            <div>
                 <a href="{% url 'institutions' %}" class="link-style">
-                    <h2>Institutions</h2>
-                    <p>Explore top universities offering the majors you are interested in.</p>
+                    <h5>Institutions</h2>
+                    <p>Explore available campuses and institutions.</p>
                 </a>
             </div>
-            <div class="image">
-                <img src="{% static 'images/institutions_img.jpg' %}" alt="Institutions Image">
-            </div>
-        </div>
-        <div class="flexbox">
-            <div class="image">
-                <img src="{% static 'images/recommendations_img.jpg' %}" alt="Tailored Recommendations Image">
-            </div>
-            <div class="content">
+        
+            <div>
                 <a href="{% url 'questionnaire_view' %}" class="link-style">
-                    <h2>Tailored Recommendations</h2>
+                    <h5>Tailored Recommendations</h2>
                     <p>Get access to courses tailored to your specific needs.</p>
                 </a>
             </div>
-        </div>
-    </div>
-    {% else %}
-    <div class="container">
-        <div class="column" style="animation-delay: 0s;">
-            <a href="/login/" class="link-style">
-                <h2>Clusters</h2>
-                <p>Explore different clusters of courses to find your interests.</p>
-            </a>
-        </div>
-        <div class="column" style="animation-delay: 0.3s;">
-            <a href="/login/" class="link-style">
-                <h2>Courses</h2>
-                <p>Check out popular courses that might align with your career goals.</p>
-            </a>
-        </div>
-        <div class="column" style="animation-delay: 0.6s;">
-            <a href="/login/" class="link-style">
-                <h2>Institutions</h2>
-                <p>Explore top universities offering the courses you are interested in.</p>
-            </a>
-        </div>
-        <div class="column" style="animation-delay: 0.9s;">
-            <a href="/login/" class="link-style">
-                <h2>Tailored Recommendations</h2>
-                <p>Get access to courses tailored to your specific needs.</p>
-            </a>
-        </div>
-    </div>
-    
+        
 
-    {% endif %}
-    
-</div>
+        </div>
+        
+    </div>
 {% endblock %}

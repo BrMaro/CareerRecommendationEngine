@@ -86,15 +86,6 @@
             color: #000; /* Black text on hover */
         }
 
-        .main-content {
-            margin-top: 20px; /* Added margin */
-            margin-left: 40px;
-            margin-right: 32px;
-            transition: margin-left 0.3s ease;
-            padding: 10px;
-            margin-bottom: 50px;
-        }
-
         h1 {
             font-size: 72px;
         }
@@ -227,14 +218,14 @@
 
             <div id="main-content">
                 {% if messages %}
-                {% for message in messages %}
-                    <div class="alert {{ message.tags }} alert-dismissible shadow fade show" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        {{ message | safe }}
-                    </div>
-                {% endfor %}
+                    {% for message in messages %}
+                        <div class="alert {{ message.tags }} alert-dismissible shadow fade show" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            {{ message | safe }}
+                        </div>
+                    {% endfor %}
                 {% endif %}
 
                 {% block content %}
