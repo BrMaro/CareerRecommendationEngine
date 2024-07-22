@@ -1,36 +1,116 @@
 {% extends 'main/base.html' %}
 
-{% block title %} Courses
-
-{% endblock %}
+{% block title %} Courses {% endblock %}
 
 {% block content %}
 
+<style>
+    .main-content {
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 20px;
+        background: rgba(34, 34, 34, 0.9); /* Darker background */
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+        position: relative;
+        z-index: 1;
+    }
+
+    .main-content h1 {
+        font-family: 'Merriweather', serif;
+        font-size: 2.5em;
+        color: #FFFFFF; /* White text */
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 1em;
+        font-family: 'Merriweather', serif;
+        text-align: left;
+    }
+
+    .table th, .table td {
+        padding: 12px 15px;
+        border: 1px solid #555; /* Darker border */
+    }
+
+    .table th {
+        background-color: #444; /* Dark grey header background */
+        color: #fff;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #333; /* Dark grey even rows */
+    }
+
+    .table tbody tr:nth-child(odd) {
+        background-color: #444; /* Slightly lighter odd rows */
+    }
+
+    .table a {
+        color: #00BFFF; /* Bright contrasting blue */
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .table a:hover {
+        color: #1E90FF; /* Darker blue on hover */
+    }
+
+    .table td {
+        vertical-align: top; /* Align content to the top */
+    }
+</style>
+
 <div class="main-content">
-
     <h1>Courses</h1>
-
-    <table class="courses">
+    <table class="table">
         <thead>
-            <th><strong>No.</strong></th>
-            <th><strong>Name</strong></th>
-            <th><strong>Cluster</strong></th>
+            <tr>
+                <th>No.</th>
+                <th>Name</th>
+            </tr>
         </thead>
         <tbody>
             {% for item in courses %}
-                {% if item.certification_set.exists %} 
+                {% if item.certification_set.exists %}
                     <tr>
                         <td>{{ forloop.counter }}.</td>
                         <td>
-                            <a href="{% url 'certifications_by_programme' programme_name=item.programme_name %}">
+                            <a href="{% url 'certifications_by_programme' programme_name=item.programme_name %}" style="font-size: 1.2em;">
                                 {{ item.programme_name }}
                             </a>
+                            <div style="font-size: 0.7em; color: #ccc;">
+                                <strong>Parent Cluster: </strong> {{ item.cluster }}
+                            </div>
                         </td>
-                        <td>{{ item.cluster }}</td>
                     </tr>
                 {% endif %}
             {% endfor %}
         </tbody>
     </table>
+</div>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
 </div>
 {% endblock %}
