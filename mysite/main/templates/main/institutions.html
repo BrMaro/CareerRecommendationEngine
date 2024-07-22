@@ -1,38 +1,119 @@
 {% extends 'main/base.html' %}
-
-{% block title %} Instititutions
-
-{% endblock %}
+{% load static %}
+{% block title %} Institutions {% endblock %}
 
 {% block content %}
+<style>
+    .parallax {
+        /* The image used */
+        background-image: url("{% static 'images/institutions_img.jpg' %}");
+
+        /* Full height */
+        height: 100%;
+
+        /* Create the parallax scrolling effect */
+        background-attachment: fixed;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        opacity: 0.5; /* Ensures text visibility on top */
+    }
+    .main-content {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background: rgba(34, 34, 34, 0.9); /* Darker background */
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+        position: relative;
+        z-index: 1;
+    }
+
+    .main-content h1 {
+        font-family: 'Merriweather', serif;
+        font-size: 2.5em;
+        color: #FFFFFF; /* White text */
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 1em;
+        font-family: 'Merriweather', serif;
+        text-align: left;
+    }
+
+    .table th, .table td {
+        padding: 12px 15px;
+        border: 1px solid #555; /* Darker border */
+    }
+
+    .table th {
+        background-color: #444; /* Dark grey header background */
+        color: #fff;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #333; /* Dark grey even rows */
+    }
+
+    .table tbody tr:nth-child(odd) {
+        background-color: #444; /* Slightly lighter odd rows */
+    }
+
+    .table a {
+        color: #00BFFF; /* Bright contrasting blue */
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .table a:hover {
+        color: #1E90FF; /* Darker blue on hover */
+    }
+
+    .table td {
+        vertical-align: top; /* Align content to the top */
+    }
+</style>
+
+<div class="parallax"></div>
+
 <div class="main-content">
-    <h1>Instititutions</h1>
-
-    <table class="institutions-table">
+    <h1>Institutions</h1>
+    <table class="table">
         <thead>
-            <td><strong>Id</strong>.</td>
-            <td><strong>Alias</strong>.</td>
-            <td><strong>Name</strong>.</td>
-            <td><strong>Category</strong>.</td>
-            <td><strong>Type</strong>.</td>
-
+            <tr>
+                <th>Id</th>
+                <th>Details</th>
+            </tr>
         </thead>
         <tbody>
-        {% for inst in data %}
-            <tr>
-                <td>{{ inst.id }}</td>
-                <td>{{ inst.alias }}</td>
-                <td>
-                    <a href="{% url 'certifications_per_institution' iname=inst.iname %}">
-                        {{ inst.iname }}
-                    </a>
-                </td>
-                <td>{{ inst.category }}</td>
-                <td>{{ inst.institution_type }}</td>
-            </tr>
-        {% endfor %}
+            {% for inst in data %}
+                <tr>
+                    <td>{{ inst.id }}</td>
+                    <td>
+                        <div style="font-size: 1.2em; color: #FFD700;">
+                            <a href="{% url 'certifications_per_institution' iname=inst.iname %}">
+                                {{ inst.iname }}
+                            </a>
+                        </div>
+                        <div style="font-size: 0.9em; color: #ccc;">
+                            <strong>Alias: </strong> {{ inst.alias }}<br>
+                            <strong>Category: </strong> {{ inst.category }}<br>
+                            <strong>Type: </strong> {{ inst.institution_type }}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
-
 </div>
 {% endblock %}
