@@ -3,24 +3,87 @@
 {% block title %} {{ iname }} Certifications {% endblock %}
 
 {% block content %}
+<style>
+    .main-content {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background: rgba(34, 34, 34, 0.9); /* Darker background */
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+        position: relative;
+        z-index: 1;
+    }
+
+    .main-content h3 {
+        font-family: 'Merriweather', serif;
+        font-size: 2.5em;
+        color: #FFFFFF; /* White text */
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 1em;
+        font-family: 'Merriweather', serif;
+        text-align: left;
+    }
+
+    .table th, .table td {
+        padding: 12px 15px;
+        border: 1px solid #555; /* Darker border */
+    }
+
+    .table th {
+        background-color: #444; /* Dark grey header background */
+        color: #fff;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #333; /* Dark grey even rows */
+    }
+
+    .table tbody tr:nth-child(odd) {
+        background-color: #444; /* Slightly lighter odd rows */
+    }
+
+    .table td {
+        color: #00BFFF; /* Bright contrasting blue */
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .table td:hover {
+        color: #ffffff; /* Darker blue on hover */
+    }
+
+    .table td {
+        vertical-align: top; /* Align content to the top */
+    }
+</style>
+
 <div class="main-content">
-    <h3>{{ iname }}</h1>
-    <table class="certifications">
+    <h3>{{ iname }}</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Course</th>
+                <th>First Year Fee</th>
+            </tr>
+        </thead>
         <tbody>
-            <thead>
-                <td><strong>Id</strong></td>
-                <td><strong>Course</strong></td>
-                <td><strong>First Year Fee</strong></td>
-            </thead>
             {% for certification in certifications_data %}
             <tr>
                 <td>{{ certification.programme_code }}</td>
-                <td>{{ certification.programme_name}}</td>
+                <td>{{ certification.programme_name }}</td>
                 <td>{{ certification.year_1_programme_cost }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
-
 {% endblock %}
