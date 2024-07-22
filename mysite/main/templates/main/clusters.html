@@ -1,28 +1,131 @@
 {% extends 'main/base.html' %}
- 
+{% load static %}
 {% block title %} Clusters {% endblock %}
 
 {% block content %}
+<style>
+    .parallax {
+        /* The image used */
+        background-image: url("{% static 'images/clusters_img.jpg' %}");
+
+        /* Full height */
+        height: 100%;
+
+        /* Create the parallax scrolling effect */
+        background-attachment: fixed;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        position: absolute;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        opacity: 0.5; /* Ensures text visibility on top */
+    }
+
+    .main-content {
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 20px;
+        background: rgba(34, 34, 34, 0.9); /* Darker background */
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Stronger shadow */
+        position: relative;
+        z-index: 1;
+    }
+
+    .main-content h1 {
+        font-family: 'Merriweather', serif;
+        font-size: 2.5em;
+        color: #FFFFFF; /* White text */
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .main-content p {
+        font-family: 'Merriweather', serif;
+        font-size: 1.1em;
+        color: #CCCCCC; /* Light grey text */
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 1em;
+        font-family: 'Merriweather', serif;
+        text-align: left;
+    }
+
+    .table th, .table td {
+        padding: 12px 15px;
+        border: 1px solid #555; /* Darker border */
+    }
+
+    .table th {
+        background-color: #444; /* Dark grey header background */
+        color: #fff;
+    }
+
+    .table tbody tr:nth-child(even) {
+        background-color: #333; /* Dark grey even rows */
+    }
+
+    .table tbody tr:nth-child(odd) {
+        background-color: #444; /* Slightly lighter odd rows */
+    }
+
+    .table a {
+        color: #00BFFF; /* Bright contrasting blue */
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .table a:hover {
+        color: #1E90FF; /* Darker blue on hover */
+    }
+
+    .table td {
+        vertical-align: top; /* Align content to the top */
+    }
+
+</style>
+
+<div class="parallax"></div>
+
+<div class="parallax"></div>
+
 <div class="main-content">
     <h1>Clusters</h1>
     <p>The courses to pick from are generally divided into the following clusters:</p>
     <table class="table">
         <thead>
-            <th>Cluster</th>
-            <th>No.</th>
+            <tr>
+                <th>No.</th>
+                <th>Cluster</th>
+            </tr>
         </thead>
         <tbody>
             {% for cluster in clusters_with_count %}
                 <tr>
+                    <td>{{ forloop.counter }}</td>
                     <td>
-                        <a href="{% url 'courses_by_cluster' cluster=cluster.cluster %}">
-                            {{ cluster.cluster }}
-                        </a>
+                        <div>
+                            <a href="{% url 'courses_by_cluster' cluster=cluster.cluster %}" style="font-size: 1.2em; color: linear-gradient(to bottom right, #2196F3, #000)">
+                                {{ cluster.cluster }}
+                            </a>
+                            <!-- <div style="font-size: 0.7em; color: #ccc;">
+                                <strong>Courses: </strong> {{ cluster.course_count }}
+                            </div> -->
+                        </div>
                     </td>
-                    <td>{{ cluster.course_count }}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
 {% endblock %}
