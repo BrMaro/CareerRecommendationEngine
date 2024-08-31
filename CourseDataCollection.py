@@ -173,7 +173,7 @@ def get_course_and_certification_data():
                         prog_table = WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CLASS_NAME, "col-sm-12")))
                         prog_tbody = prog_table.find_element(By.TAG_NAME, "tbody")
                         prog_tr = prog_tbody.find_elements(By.CSS_SELECTOR, "tr")
-
+                        driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});",prog_tr[i])
                         prog_tr[i].click()
 
                         # Scrape course details
@@ -298,7 +298,11 @@ def get_course_and_certification_data():
                 page_number = 1  # Reset page number for the next cluster
                 save_progress(cluster_index, page_number, course_index)  # Save progress
 
-        except selenium.common.NoSuchWindowException or KeyboardInterrupt:
+        except selenium.common.NoSuchWindowException:
+            print("\nWindow Closed")
+            return
+
+        except KeyboardInterrupt:
             print("\nWindow Closed")
             return
 
