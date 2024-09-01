@@ -144,46 +144,46 @@
             padding-bottom: 2.5rem;    /* Footer height */
         }
 
-        .footer {
-            width: 100%;
-            background-color: #000;
-            color: #fff;
-            padding: 0 -40px;
-            height: 3 remm;
-            position: absolute;
-            bottom: 0; /* Stick to the bottom */
-            left: 0;
-        }
+/* Replace existing footer styles with the following */
+.footer {
+    background-color: #000; /* Black background */
+    color: #fff; /* White text */
+    font-family: 'Raleway', sans-serif; /* Raleway font family */
+    font-weight: bold; /* Bold text */
+    padding: 20px; /* Padding around content */
+    text-align: center; /* Centered text */
+    width: 100%; /* Full width */
+}
 
-        .footer-columns {
-            display: flex;
-            justify-content: space-around;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+.footer .footer-columns {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+}
 
-        .footer-column {
-            width: 200px;
-            margin-bottom: 20px;
-        }
+.footer .footer-column {
+    width: 200px;
+    margin-bottom: 20px;
+}
 
-        .footer-column h3 {
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
+.footer .footer-column h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
 
-        .footer-column p {
-            font-size: 12px;
-            margin: 5px 0;
-        }
+.footer .footer-column p {
+    font-size: 12px;
+    margin: 5px 0;
+}
 
-        .footer-column.empty {
-            width: 0;
-            visibility: hidden;
-        }
-        
+.footer .footer-column.empty {
+    width: 0;
+    visibility: hidden;
+}
+
     </style>
 
     <meta charset="UTF-8">
@@ -229,7 +229,7 @@
             </div>
         </div>
 
-        <footer class="mt-auto" id="footer" >
+        <footer class="footer">
             <div class="footer-columns">
                 <div class="footer-column">
                     <h3>Contact Us</h3>
@@ -250,6 +250,7 @@
                 </div>
             </div>
         </footer>
+        
     </div>
     
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

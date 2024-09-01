@@ -1,14 +1,17 @@
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import Select
 import mysql.connector
-from mysite.institutions.models import Institution
+# from mysite.institutions.models import Institution
 
 # Set up Google Chrome option and open browser
 options = Options()
 options.add_experimental_option("detach", True)
-driver = webdriver.Chrome(options=options)
+driver_path = 'C:\\Users\\Techron\\PycharmProjects\\chromedriver.exe'
+service = Service(executable_path=driver_path)
+driver = webdriver.Chrome(options=options,service=service)
 url = "https://students.kuccps.net/login/"
 driver.get(url)
 driver.implicitly_wait(10)
@@ -32,13 +35,18 @@ def login(kcse_index, year, password):
     driver.find_element(By.TAG_NAME, "button").click()
 
 
-def update_institution_values(id, alias, name, category, institution_type, parent_ministry):
-    update_institution_table_query = f"""
-    INSERT INTO Institution(id,alias,IName,Category,Institution_type,Parent_ministry)
-    VALUES(%s,%s,%s,%s,%s,%s)
+def insert_institution_values(id, alias, name, category, institution_type, parent_ministry):
+    insert_institution_table_query = """
+    INSERT INTO Institution(id, alias, IName, Category, Institution_type, Parent_ministry)
+    VALUES (%s, %s, %s, %s, %s, %s)
+    ON DUPLICATE KEY UPDATE
+        alias = VALUES(alias),
+        Category = VALUES(Category),
+        Institution_type = VALUES(Institution_type),
+        Parent_ministry = VALUES(Parent_ministry);
     """
     data = (id, alias, name, category, institution_type, parent_ministry)
-    cursor.execute(update_institution_table_query, data)
+    cursor.execute(insert_institution_table_query, data)
     conn.commit()
 
 
@@ -59,7 +67,7 @@ def get_institution_data():
                 category = td_elements[i + 3].text
                 institution_type = td_elements[i + 4].text
                 parent_ministry = td_elements[i + 5].text
-                update_institution_values(id, alias, name, category, institution_type, parent_ministry)
+                insert_institution_values(id, alias, name, category, institution_type, parent_ministry)
                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             driver.find_element(By.LINK_TEXT, "Next").click()
     except IndexError:

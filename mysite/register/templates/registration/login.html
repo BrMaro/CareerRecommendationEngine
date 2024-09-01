@@ -4,9 +4,107 @@
 {% block title %} Log In {% endblock %}
 
 {% block content %}
+    <style>
+        /* .container {
+            margin-top: 5%;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        } */
+
+        .card {
+            margin-top: 2%;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            max-width: 500px; /* Increase the max-width for a wider card */
+            width: 100%; /* Make sure it scales with the container */
+            margin: 0 auto; /* Center align the card */
+        }
+
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #2196F3, #21CBF3);
+            border: none;
+            font-size: 1em;
+            padding: 10px;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to right, #21CBF3, #2196F3);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .mt-3 p {
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .mt-3 a {
+            color: #2196F3;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .mt-3 a:hover {
+            color: #0D47A1;
+            text-decoration: none;
+        }
+
+        /* Ensure padding inside the card for a better look */
+        .card-body {
+            padding: 30px;
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 768px) {
+            .container {
+                margin-top: 10%;
+            }
+
+            .card {
+                max-width: 90%; /* Adjust width on smaller screens */
+            }
+
+            .card-title {
+                font-size: 1.3em;
+            }
+
+            .btn-primary {
+                font-size: 0.9em;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .card-title {
+                font-size: 1.2em;
+            }
+
+            .btn-primary {
+                font-size: 0.8em;
+                padding: 8px;
+            }
+        }
+    </style>
+
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-6 col-md-8">
+            <div class="col-lg-8 col-md-10 col-sm-12"> <!-- Adjusted column width for larger card -->
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Log In</h5>
