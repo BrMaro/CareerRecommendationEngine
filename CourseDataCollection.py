@@ -95,19 +95,6 @@ def update_certification_values(Programme_Code, Iname, Programme_Name, Year_1_Pr
     conn.commit()
 
 
-def most_common_code(numbers):
-    if not numbers:
-        return None  # Return None if the input list is empty.
-
-    # Use Counter to count the occurrences of each element.
-    count = Counter(numbers)
-
-    # Find the element with the highest count.
-    most_common = max(count, key=count.get)
-
-    return most_common
-
-
 def get_course_and_certification_data():
     cluster_index, page_number, course_index = load_progress()
 
@@ -135,21 +122,34 @@ def get_course_and_certification_data():
                     driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", li_element)
 
 
-
-                # Ensure the element is clickable
-                group_tab = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "(//span[@class='filter-option pull-left'])[2]")))
-                group_tab.click()
+                try:
+                    # Ensure the element is clickable
+                    group_tab = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "(//span[@class='filter-option pull-left'])[2]")))
+                    group_tab.click()
+                except selenium.common.exceptions.ElementClickInterceptedException:
+                    group_tab = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "(//span[@class='filter-option pull-left'])[2]")))
+                    driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", group_tab)
+                    group_tab.click()
 
                 # Refresh the dropdown elements
                 dropdown_ul = driver.find_elements(By.XPATH, "(//ul[@class='dropdown-menu inner'])")
-                li_elements = dropdown_ul[1].find_elements(By.TAG_NAME, "li")[1:]
+                try:
+                    li_elements = dropdown_ul[1].find_elements(By.TAG_NAME, "li")[1:]
+                    driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", li_elements[cl])
+                    li_elements[cl].click()
+                except selenium.common.exceptions.ElementClickInterceptedException:
+                    li_elements = dropdown_ul[1].find_elements(By.TAG_NAME, "li")[1:]
+                    driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", li_elements[cl])
+                    li_elements[cl].click()
 
-                li_elements[cl].click()
                 print(f"Collecting Cluster {cl + 1}")
 
                 search_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//button[contains(@class,'btn bg-inverse')]")))
-                search_button.click()
-
+                try:
+                    search_button.click()
+                except selenium.common.exceptions.ElementClickInterceptedException:
+                    driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});",search_button)
+                    search_button.click()
                 try:
                     pg1 = driver.find_element(By.LINK_TEXT, "1")
                     all_pg = driver.find_elements(By.XPATH, "(//li[@class='paginate_button ']//a)")
@@ -256,12 +256,11 @@ def get_course_and_certification_data():
                         itable_tr_elements = itable_tbody.find_elements(By.TAG_NAME, "td")
 
                         course_index = i + 1  # Update course index
-                        save_progress(cl, pg, course_index)  # Save progress
 
 
                         # scrape certification list
                         for i in range(0, len(itable_tr_elements), 9):
-                            Programme_Code = itable_tr_elements[i + 2].text.replace("TRANSFER","")
+                            Programme_Code = itable_tr_elements[i + 2].text.replace("TRANSFER","").replace("APPLICATION","")
                             Iname = itable_tr_elements[i].text
                             #Programme_Name = itable_tr_elements[i+3].text
                             Year_1_Programme_cost = itable_tr_elements[i + 4].text
@@ -271,7 +270,9 @@ def get_course_and_certification_data():
                             # print(Programme_Code)
                             if not check_certification_duplicate_records(Programme_Code):
                                 update_certification_values(Programme_Code, Iname, programme_name,Year_1_Programme_cost, _2022_cut_off, _2021_cut_off,_2020_cut_off)  # the programme name used here is the programme name taken before preceding loop
-                                print(f"Program Code: {Programme_Code, Iname}",end=", ")
+                                print(f"Program Code: {Programme_Code} Institution Name:{Iname}")
+
+                        save_progress(cl, pg, course_index)  # Save progress
 
                         driver.back()
 
