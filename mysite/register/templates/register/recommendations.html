@@ -4,106 +4,81 @@
 
 {% block content %}
 <div class="container">
-  <h1>Unlock Your Learning Journey</h1>
-  <p>Welcome to your personalized recommendations!</p>
-  <hr>
+    <h1 class="mb-4">Your Course Recommendations</h1>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="row">
+            {% for course in recommended_courses %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" 
+                                   class="custom-control-input" 
+                                   id="course_{{ course.course_id }}" 
+                                   name="locked_courses" 
+                                   value="{{ course.course_id }}"
+                                   {% if course.course_id in user_preferred_course_ids %}checked{% endif %}>
+                            <label class="custom-control-label" for="course_{{ course.course_id }}">
+                                Lock Course
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course.programme_name }}</h5>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <strong>Cluster:</strong> {{ course.cluster }}
+                            </small>
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <strong>Required Grade:</strong> {{ course.minimum_mean_grade }}
+                            </small>
+                        </p>
+                    </div>
+                    
+                    <div class="card-footer bg-white">
+                        <a href="{% url 'certifications_by_programme' programme_name=course.programme_name %}" 
+                           class="btn btn-outline-primary btn-sm btn-block">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
 
-  <h2>Recommendations</h2> <!-- Added subheading for the recommendation listing -->
-
-  <style>
-    /* recommendations.css */
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    li {
-      background-color: #f8f9fa; /* Match Bootstrap card background */
-      padding: 0.6rem 1rem;
-      border-radius: 0.3rem;
-      color: #000; /* Match Bootstrap card text color */
-      margin-bottom: 0.7rem;
-      opacity: 0;
-    }
-
-    ul.show li {
-      animation-name: fadeIn;
-      animation-timing-function: ease-in-out;
-      animation-duration: 350ms;
-      animation-fill-mode: both;
-    }
-
-    label {
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    input[type="checkbox"] {
-      display: none;
-    }
-
-    input[type="checkbox"] + label {
-      position: relative;
-      padding-left: 25px;
-    }
-
-    input[type="checkbox"] + label:before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 20px;
-      height: 20px;
-      border: 1px solid #adb5bd; /* Match Bootstrap card text color */
-      background-color: #fff;
-      border-radius: 4px;
-    }
-
-    input[type="checkbox"]:checked + label:before {
-      content: "\2713";
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 20px;
-      height: 20px;
-      border: 1px solid #adb5bd; /* Match Bootstrap card text color */
-      background-color: #007bff; /* Match Bootstrap primary color */
-      color: #fff;
-      border-radius: 4px;
-      text-align: center;
-      line-height: 20px;
-    }
-
-    @keyframes fadeIn {
-      0% {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  </style>
-
-  <form method="post">
-    {% csrf_token %}
-    <ul class="{% if recommended_courses %}show{% endif %}"> <!-- Added condition to apply 'show' class only if recommended_courses is not empty -->
-      {% for course in recommended_courses %}
-      <li>
-        <input type="checkbox" id="{{ course.course_id }}" name="locked_courses" value="{{ course.course_id }}" {% if course.course_id in user_preferred_course_ids %}checked{% endif %}>
-        <label for="{{ course.course_id }}"><a href="{% url 'certifications_by_programme' programme_name=course.programme_name %}">{{ course.programme_name }}</a></label>
-      </li>
-      {% endfor %}
-    </ul>
-    <button type="submit" class="btn btn-primary">Lock Courses</button>
-  </form>
-
-  <br>
-
-  <div class="text-center"> <!-- Centered link wrapper -->
-    <a href="{% url 'update_recommendations' %}" class="btn btn-secondary">Refresh</a>
-  </div>
+        <div class="text-center mt-4 mb-5">
+            <button type="submit" class="btn btn-primary mr-3">Save Preferences</button>
+            <a href="{% url 'update_recommendations' %}" class="btn btn-secondary">Refresh</a>
+        </div>
+    </form>
 </div>
+
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .custom-control-label {
+        color: white;
+        cursor: pointer;
+    }
+
+    .card-header .custom-control {
+        margin-bottom: 0;
+    }
+    
+    .btn-outline-primary:hover {
+        color: white;
+    }
+</style>
 {% endblock %}
