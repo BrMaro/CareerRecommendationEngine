@@ -1,2 +1,3 @@
 .env
 progress.txt
+mysite/db.sqlite3
